@@ -1,0 +1,2 @@
+module ConfidentialityImpactsHelper
+end

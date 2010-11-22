@@ -1,0 +1,50 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Score:</b>
+  <%= @cvss.score %>
+</p>
+
+<p>
+  <b>Source:</b>
+  <%= @cvss.source %>
+</p>
+
+<p>
+  <b>Generated on:</b>
+  <%= @cvss.generated_on %>
+</p>
+
+<p>
+  <b>Access vector:</b>
+  <%= @cvss.access_vector %>
+</p>
+
+<p>
+  <b>Access complexity:</b>
+  <%= @cvss.access_complexity %>
+</p>
+
+<p>
+  <b>Authentication:</b>
+  <%= @cvss.authentication %>
+</p>
+
+<p>
+  <b>Integrity impact:</b>
+  <%= @cvss.integrity_impact_id %>
+</p>
+
+<p>
+  <b>Confidentiality impact:</b>
+  <%= @cvss.confidentiality_impact_id %>
+</p>
+
+<p>
+  <b>Availability impact:</b>
+  <%= @cvss.availability_impact_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_cvss_path(@cvss) %> |
+<%= link_to 'Back', cvsses_path %>

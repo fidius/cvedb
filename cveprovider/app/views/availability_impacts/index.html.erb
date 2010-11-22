@@ -1,0 +1,23 @@
+<h1>Listing availability_impacts</h1>
+
+<table>
+  <tr>
+    <th>Impact</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @availability_impacts.each do |availability_impact| %>
+  <tr>
+    <td><%= availability_impact.impact_id %></td>
+    <td><%= link_to 'Show', availability_impact %></td>
+    <td><%= link_to 'Edit', edit_availability_impact_path(availability_impact) %></td>
+    <td><%= link_to 'Destroy', availability_impact, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Availability impact', new_availability_impact_path %>

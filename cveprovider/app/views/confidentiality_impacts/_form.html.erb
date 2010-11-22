@@ -1,0 +1,21 @@
+<%= form_for(@confidentiality_impact) do |f| %>
+  <% if @confidentiality_impact.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@confidentiality_impact.errors.count, "error") %> prohibited this confidentiality_impact from being saved:</h2>
+
+      <ul>
+      <% @confidentiality_impact.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :impact_id %><br />
+    <%= f.text_field :impact_id %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

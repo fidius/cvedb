@@ -1,0 +1,23 @@
+<h1>Listing confidentiality_impacts</h1>
+
+<table>
+  <tr>
+    <th>Impact</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @confidentiality_impacts.each do |confidentiality_impact| %>
+  <tr>
+    <td><%= confidentiality_impact.impact_id %></td>
+    <td><%= link_to 'Show', confidentiality_impact %></td>
+    <td><%= link_to 'Edit', edit_confidentiality_impact_path(confidentiality_impact) %></td>
+    <td><%= link_to 'Destroy', confidentiality_impact, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Confidentiality impact', new_confidentiality_impact_path %>
