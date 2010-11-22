@@ -1,4 +1,6 @@
 Cveprovider::Application.routes.draw do
+  resources :integrity_impacts
+
   resources :impacts
 
   # The priority is based upon order of creation:
