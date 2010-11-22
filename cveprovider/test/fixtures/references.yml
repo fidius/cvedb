@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  source: MyString
+  link: MyString
+  name: MyString
+  nvd_entry_id: 1
+
+two:
+  source: MyString
+  link: MyString
+  name: MyString
+  nvd_entry_id: 1
