@@ -1,0 +1,2 @@
+module ImpactsHelper
+end
