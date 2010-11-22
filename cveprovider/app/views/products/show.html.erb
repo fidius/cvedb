@@ -1,0 +1,40 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Part:</b>
+  <%= @product.part %>
+</p>
+
+<p>
+  <b>Vendor:</b>
+  <%= @product.vendor %>
+</p>
+
+<p>
+  <b>Product:</b>
+  <%= @product.product %>
+</p>
+
+<p>
+  <b>Version:</b>
+  <%= @product.version %>
+</p>
+
+<p>
+  <b>Update:</b>
+  <%= @product.update %>
+</p>
+
+<p>
+  <b>Edition:</b>
+  <%= @product.edition %>
+</p>
+
+<p>
+  <b>Language:</b>
+  <%= @product.language %>
+</p>
+
+
+<%= link_to 'Edit', edit_product_path(@product) %> |
+<%= link_to 'Back', products_path %>

@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Nvd entry:</b>
+  <%= @vulnerable_software.nvd_entry_id %>
+</p>
+
+<p>
+  <b>Product:</b>
+  <%= @vulnerable_software.product_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_vulnerable_software_path(@vulnerable_software) %> |
+<%= link_to 'Back', vulnerable_softwares_path %>

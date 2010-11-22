@@ -1,0 +1,25 @@
+<h1>Listing vulnerable_softwares</h1>
+
+<table>
+  <tr>
+    <th>Nvd entry</th>
+    <th>Product</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @vulnerable_softwares.each do |vulnerable_software| %>
+  <tr>
+    <td><%= vulnerable_software.nvd_entry_id %></td>
+    <td><%= vulnerable_software.product_id %></td>
+    <td><%= link_to 'Show', vulnerable_software %></td>
+    <td><%= link_to 'Edit', edit_vulnerable_software_path(vulnerable_software) %></td>
+    <td><%= link_to 'Destroy', vulnerable_software, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Vulnerable software', new_vulnerable_software_path %>

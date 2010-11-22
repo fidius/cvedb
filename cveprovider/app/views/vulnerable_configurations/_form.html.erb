@@ -1,0 +1,25 @@
+<%= form_for(@vulnerable_configuration) do |f| %>
+  <% if @vulnerable_configuration.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@vulnerable_configuration.errors.count, "error") %> prohibited this vulnerable_configuration from being saved:</h2>
+
+      <ul>
+      <% @vulnerable_configuration.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :nvd_entry_id %><br />
+    <%= f.text_field :nvd_entry_id %>
+  </div>
+  <div class="field">
+    <%= f.label :product_id %><br />
+    <%= f.text_field :product_id %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

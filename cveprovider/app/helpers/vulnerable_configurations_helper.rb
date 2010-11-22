@@ -1,0 +1,2 @@
+module VulnerableConfigurationsHelper
+end

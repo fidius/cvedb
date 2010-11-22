@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  cve: MyString
+  cwe: MyString
+  cvss_id: 1
+  summary: MyString
+  published: 2010-11-22 18:54:02
+  last_modified: 2010-11-22 18:54:02
+
+two:
+  cve: MyString
+  cwe: MyString
+  cvss_id: 1
+  summary: MyString
+  published: 2010-11-22 18:54:02
+  last_modified: 2010-11-22 18:54:02
