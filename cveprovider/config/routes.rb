@@ -18,6 +18,9 @@ Cveprovider::Application.routes.draw do
   resources :integrity_impacts
 
   resources :impacts
+  
+  match 'administration/parser/index' => 'administration#parser_index'
+  match 'administration/parser/parse' => 'administration#parse_file'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

@@ -70,6 +70,20 @@ module NVDParser
     
   end
   
+  def self.save_entries_to_models file
+    entries = parse_nvd_file file
+    entries.each do |entry|
+      nvd_entry = NvdEntry.find_or_create_by_cve(entry.cve)
+      nvd_entry.update_attributes({
+        :cve => entry.cve
+        :cwe => entry.cwe,
+        :summary => entry.summary,
+        :published_datetime => DateTime.xmlschema(entry.published_datetime),
+        :last_modified_datetime => DateTime.xmlschema(entry.last_modified_datetime)
+      })
+      
+    end
+  end
   
   def self.parse_nvd_file file
     
