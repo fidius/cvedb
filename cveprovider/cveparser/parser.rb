@@ -5,8 +5,6 @@
 
 module NVDParser
 
-  require 'nokogiri'
-  
   class NVDEntry
     
     attr_accessor :cve, :vulnerable_configurations, :cvss, :vulnerable_software,
@@ -73,15 +71,80 @@ module NVDParser
   def self.save_entries_to_models file
     entries = parse_nvd_file file
     entries.each do |entry|
+      
       nvd_entry = NvdEntry.find_or_create_by_cve(entry.cve)
+      puts "#{entry.cvss.generated_on_datetime}"
+      time = entry.cvss.generated_on_datetime ? DateTime.xmlschema(entry.cvss.generated_on_datetime) : nil
+      cvss_params = {
+        :score => entry.cvss.score,
+        :source => entry.cvss.source,
+        :generated_on => time,
+        :access_vector => entry.cvss.access_vector,
+        :access_complexity => entry.cvss.access_complexity,
+        :authentication => entry.cvss.authentication
+      }
+      
+      if nvd_entry.new_record?
+        nvd_entry.cvss = Cvss.create(cvss_params)
+      else
+        puts "#{nvd_entry.inspect}"
+        nvd_entry.cvss.update_attributes(cvss_params)
+      end
+      
+      
+      integrity_params = {
+        :impact_id => Impact.find_by_name(entry.cvss.integrity_impact)
+      }
+
+      confidentiality_params = {
+        :impact_id => Impact.find_by_name(entry.cvss.confidentiality_impact)
+      }
+      
+      availability_params = {
+        :impact_id => Impact.find_by_name(entry.cvss.availability_impact)
+      }
+      
+      if nvd_entry.new_record?
+        c_impact = ConfidentialityImpact.create(confidentiality_params)
+        i_impact = IntegrityImpact.create(integrity_params)
+        a_impact = AvailabilityImpact.create(availability_params)
+        nvd_entry.cvss.confidentiality_impact = c_impact
+        nvd_entry.cvss.integrity_impact = i_impact
+        nvd_entry.cvss.acailability_impact = a_impact
+      else
+        nvd_entry.cvss.confidentiality_impact.update_attributes(confidentiality_params)
+        nvd_entry.cvss.integrity_impact.update_attributes(integrity_params)
+        nvd_entry.cvss.availability_impact.update_attributes(availability_params)
+      end
+      
       nvd_entry.update_attributes({
-        :cve => entry.cve
+        :cve => entry.cve,
         :cwe => entry.cwe,
         :summary => entry.summary,
         :published_datetime => DateTime.xmlschema(entry.published_datetime),
         :last_modified_datetime => DateTime.xmlschema(entry.last_modified_datetime)
       })
       
+      entry.vulnerable_configurations.each do |product|
+        values = product.split(":")
+        values[1].sub!("/", "")
+        # values = [cpe, part, vendor, product, version, update, edition, language]
+        p = Product.find_or_create_by_part_and_vendor_and_product_and_version_and_update_and_edition_and_language(
+          values[1..7]
+        )
+        VulnerableConfiguration.find_or_create_by_nvd_entry_id_and_product_id(nvd_entry.id, p.id)
+      end
+      
+      entry.vulnerable_software.each do |product|
+        values = product.split(":")
+        values[1].sub!("/", "")
+        # values = [cpe, part, vendor, product, version, update, edition, language]
+        p = Product.find_or_create_by_part_and_vendor_and_product_and_version_and_update_and_edition_and_language(
+          values[1..7]
+        )
+        VulnerableSoftware.find_or_create_by_nvd_entry_id_and_product_id(nvd_entry.id, p.id)
+      end
+      NvdEntry.save!
     end
   end
   
@@ -196,4 +259,4 @@ module NVDParser
 
 end
 
-NVDParser::print_entries('nvdcve-2.0-recent.xml')
+NVDParser::save_entries_to_models('cveparser/nvdcve-2.0-recent.xml')
