@@ -284,4 +284,4 @@ module NVDParser
 
 end
 
-NVDParser::save_entries_to_models('cveparser/nvdcve-2.0-recent.xml')
+NVDParser::save_entries_to_models('cveparser/nvdcve-2.0-2010.xml')
