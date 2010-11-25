@@ -48,7 +48,7 @@ module NVDParser
   end
   
   
-  class Cvss
+  class Cvss_
     
     attr_accessor :score, :access_vector, :access_complexity, :authentication,
         :confidentiality_impact, :integrity_impact, :availability_impact,
@@ -70,81 +70,86 @@ module NVDParser
   
   def self.save_entries_to_models file
     entries = parse_nvd_file file
+    num_entries = entries.size
+    puts "Finished parsing: Found #{num_entries} entries"   
+    i = 1
     entries.each do |entry|
-      
-      nvd_entry = NvdEntry.find_or_create_by_cve(entry.cve)
-      puts "#{entry.cvss.generated_on_datetime}"
-      time = entry.cvss.generated_on_datetime ? DateTime.xmlschema(entry.cvss.generated_on_datetime) : nil
-      cvss_params = {
-        :score => entry.cvss.score,
-        :source => entry.cvss.source,
-        :generated_on => time,
-        :access_vector => entry.cvss.access_vector,
-        :access_complexity => entry.cvss.access_complexity,
-        :authentication => entry.cvss.authentication
-      }
-      
-      if nvd_entry.new_record?
-        nvd_entry.cvss = Cvss.create(cvss_params)
-      else
-        puts "#{nvd_entry.inspect}"
-        nvd_entry.cvss.update_attributes(cvss_params)
-      end
-      
-      
-      integrity_params = {
-        :impact_id => Impact.find_by_name(entry.cvss.integrity_impact)
-      }
-
-      confidentiality_params = {
-        :impact_id => Impact.find_by_name(entry.cvss.confidentiality_impact)
-      }
-      
-      availability_params = {
-        :impact_id => Impact.find_by_name(entry.cvss.availability_impact)
-      }
-      
-      if nvd_entry.new_record?
-        c_impact = ConfidentialityImpact.create(confidentiality_params)
-        i_impact = IntegrityImpact.create(integrity_params)
-        a_impact = AvailabilityImpact.create(availability_params)
-        nvd_entry.cvss.confidentiality_impact = c_impact
-        nvd_entry.cvss.integrity_impact = i_impact
-        nvd_entry.cvss.acailability_impact = a_impact
-      else
-        nvd_entry.cvss.confidentiality_impact.update_attributes(confidentiality_params)
-        nvd_entry.cvss.integrity_impact.update_attributes(integrity_params)
-        nvd_entry.cvss.availability_impact.update_attributes(availability_params)
-      end
-      
-      nvd_entry.update_attributes({
+      puts "START: #{entry.cve} [#{i}/#{num_entries}]"
+      i += 1
+      #Create NVD-Entry and attributes
+      db_entry = NvdEntry.find_or_create_by_cve(entry.cve)
+      db_entry.update_attributes({
         :cve => entry.cve,
         :cwe => entry.cwe,
         :summary => entry.summary,
-        :published_datetime => DateTime.xmlschema(entry.published_datetime),
-        :last_modified_datetime => DateTime.xmlschema(entry.last_modified_datetime)
+        :published => DateTime.xmlschema(entry.published_datetime),
+        :last_modified => DateTime.xmlschema(entry.last_modified_datetime)
       })
+      if entry.cvss
+        #Create CVSS Entry
+        time = entry.cvss.generated_on_datetime ? DateTime.xmlschema(entry.cvss.generated_on_datetime) : nil
+        cvss_params = {
+          :score => entry.cvss.score,
+          :source => entry.cvss.source,
+          :generated_on => time,
+          :access_vector => entry.cvss.access_vector,
+          :access_complexity => entry.cvss.access_complexity,
+          :authentication => entry.cvss.authentication
+        }
+
+        integrity_params = {
+          :impact_id => Impact.find_by_name(entry.cvss.integrity_impact).id
+        }
+
+        confidentiality_params = {
+          :impact_id => Impact.find_by_name(entry.cvss.confidentiality_impact).id
+        }
+        
+        availability_params = {
+          :impact_id => Impact.find_by_name(entry.cvss.availability_impact).id
+        }
+
+        unless db_entry.cvss
+          db_entry.cvss = Cvss.create(cvss_params)
+          c_impact = ConfidentialityImpact.create(confidentiality_params)
+          i_impact = IntegrityImpact.create(integrity_params)
+          a_impact = AvailabilityImpact.create(availability_params)
+          db_entry.cvss.confidentiality_impact = c_impact
+          db_entry.cvss.integrity_impact = i_impact
+          db_entry.cvss.availability_impact = a_impact
+          db_entry.cvss.save!
+        else
+          db_entry.cvss.update_attributes(cvss_params)
+          db_entry.cvss.confidentiality_impact.update_attributes(confidentiality_params)
+          db_entry.cvss.integrity_impact.update_attributes(integrity_params)
+          db_entry.cvss.availability_impact.update_attributes(availability_params)
+        end
+      end
       
       entry.vulnerable_configurations.each do |product|
         values = product.split(":")
         values[1].sub!("/", "")
         # values = [cpe, part, vendor, product, version, update, edition, language]
-        p = Product.find_or_create_by_part_and_vendor_and_product_and_version_and_update_and_edition_and_language(
-          values[1..7]
-        )
-        VulnerableConfiguration.find_or_create_by_nvd_entry_id_and_product_id(nvd_entry.id, p.id)
+        p = Product.find_or_create_by_part_and_vendor_and_product_and_version_and_update_nr_and_edition_and_language(
+          values[1], values[2], values[3], values[4], values[5], values[6], values[7])
+        VulnerableConfiguration.find_or_create_by_nvd_entry_id_and_product_id(db_entry.id, p.id)
       end
       
       entry.vulnerable_software.each do |product|
         values = product.split(":")
         values[1].sub!("/", "")
         # values = [cpe, part, vendor, product, version, update, edition, language]
-        p = Product.find_or_create_by_part_and_vendor_and_product_and_version_and_update_and_edition_and_language(
-          values[1..7]
-        )
-        VulnerableSoftware.find_or_create_by_nvd_entry_id_and_product_id(nvd_entry.id, p.id)
+        p = Product.find_or_create_by_part_and_vendor_and_product_and_version_and_update_nr_and_edition_and_language(
+          values[1], values[2], values[3], values[4], values[5], values[6], values[7])
+        VulnerableSoftware.find_or_create_by_nvd_entry_id_and_product_id(db_entry.id, p.id)
       end
-      NvdEntry.save!
+
+      entry.references.each do |ref|
+        r = VulnerabilityReference.find_or_create_by_name_and_link_and_source_and_nvd_entry_id(ref.name, 
+                                                                                  ref.link, ref.source, db_entry.id)        
+      end
+      
+      db_entry.save!
     end
   end
   
@@ -218,17 +223,17 @@ module NVDParser
       access_vector:          'access-vector',
       authentication:         'authentication',
       access_complexity:      'access-complexity',
-      confidentiality_impact: 'confidentiality_impact',
-      integrity_impact:       'integrity_impact',
-      availability_impact:    'availability_impact',
-      generated_on_datetime:  'generated_on_datetime'
+      confidentiality_impact: 'confidentiality-impact',
+      integrity_impact:       'integrity-impact',
+      availability_impact:    'availability-impact',
+      generated_on_datetime:  'generated-on-datetime'
     
     }.each_pair do |hash_key, xml_name|
       elem = metrics.at_css("cvss|#{xml_name}")
       value = elem ? elem.children.to_s : nil
       cvss_params[hash_key] = value
     end
-    Cvss.new(cvss_params)
+    Cvss_.new(cvss_params)
   end
   
   
@@ -259,4 +264,4 @@ module NVDParser
 
 end
 
-NVDParser::save_entries_to_models('cveparser/nvdcve-2.0-recent.xml')
+NVDParser::save_entries_to_models('cveparser/nvdcve-2.0-2010.xml')
