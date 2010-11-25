@@ -70,7 +70,6 @@ module NVDParser
   
   def self.save_entries_to_models file
     
-    
     entries = parse_nvd_file file
     num_entries = entries.size
     puts "Finished parsing: Found #{num_entries} entries"   
@@ -163,19 +162,15 @@ module NVDParser
   end
   
   def self.parse_nvd_file file
-    
-    begin
-      doc = Nokogiri::XML(File.open(file))
-    
-      entries = []
-    
-      doc.css('nvd > entry').each do |entry|
-        entries << single_entry(entry)     
-      end
-      entries
-    rescue Errno::ENOENT => e
-      puts "Error: #{e.message}"
+
+    doc = Nokogiri::XML(File.open(file))
+  
+    entries = []
+  
+    doc.css('nvd > entry').each do |entry|
+      entries << single_entry(entry)     
     end
+    entries
   end
   
   def self.single_entry entry
