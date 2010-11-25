@@ -215,25 +215,26 @@ module NVDParser
   def self.cvss entry
     
     metrics = entry.css('vuln|cvss > cvss|base_metrics')
-    
-    cvss_params = {}
-    {
-      score:                  'score',
-      source:                 'source',
-      access_vector:          'access-vector',
-      authentication:         'authentication',
-      access_complexity:      'access-complexity',
-      confidentiality_impact: 'confidentiality-impact',
-      integrity_impact:       'integrity-impact',
-      availability_impact:    'availability-impact',
-      generated_on_datetime:  'generated-on-datetime'
-    
-    }.each_pair do |hash_key, xml_name|
-      elem = metrics.at_css("cvss|#{xml_name}")
-      value = elem ? elem.children.to_s : nil
-      cvss_params[hash_key] = value
+    unless metrics.empty?
+      cvss_params = {}
+      {
+        score:                  'score',
+        source:                 'source',
+        access_vector:          'access-vector',
+        authentication:         'authentication',
+        access_complexity:      'access-complexity',
+        confidentiality_impact: 'confidentiality-impact',
+        integrity_impact:       'integrity-impact',
+        availability_impact:    'availability-impact',
+        generated_on_datetime:  'generated-on-datetime'
+      
+      }.each_pair do |hash_key, xml_name|
+        elem = metrics.at_css("cvss|#{xml_name}")
+        value = elem ? elem.children.to_s : nil
+        cvss_params[hash_key] = value
+      end
+      Cvss_.new(cvss_params)
     end
-    Cvss_.new(cvss_params)
   end
   
   
@@ -264,4 +265,4 @@ module NVDParser
 
 end
 
-NVDParser::save_entries_to_models('cveparser/nvdcve-2.0-2010.xml')
+NVDParser::save_entries_to_models('cveparser/cve_2.xml')
