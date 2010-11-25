@@ -4,8 +4,6 @@
 # Methode ("odd number list for Hash").
 
 module NVDParser
-
-  MAX_THREADS  = 4
   
   class NVDEntry
     
@@ -82,15 +80,7 @@ module NVDParser
       puts "START: #{entry.cve} [#{i}/#{num_entries}]"
       i += 1
       
-      if thread_count <= MAX_THREADS
-        thread_count += 1
-        
-        Thread.new do
-          save_entry(entry)
-          thread_count -= 1
-        end
-      end
-      
+      save_entry(entry)
     end
   end
   
