@@ -5,7 +5,7 @@ class CreateProducts < ActiveRecord::Migration
       t.string :vendor
       t.string :product
       t.string :version
-      t.string :update
+      t.string :update_nr
       t.string :edition
       t.string :language
 

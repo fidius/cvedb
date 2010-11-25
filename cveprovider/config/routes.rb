@@ -1,4 +1,6 @@
 Cveprovider::Application.routes.draw do
+  resources :vulnerability_references
+
   resources :nvd_entries
 
   resources :vulnerable_configurations
@@ -6,8 +8,6 @@ Cveprovider::Application.routes.draw do
   resources :vulnerable_softwares
 
   resources :products
-
-  resources :references
 
   resources :cvsses
 
