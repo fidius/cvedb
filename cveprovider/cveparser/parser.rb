@@ -73,8 +73,11 @@ module NVDParser
   def self.save_entries_to_models file
     
     entries = parse_nvd_file file
+    
+    start_time = Time.now
+    puts "[*] Storing the CVE-Entries in DB"
+    
     num_entries = entries.size
-    puts "Finished parsing: Found #{num_entries} entries"   
     i = 1
     thread_count = 0
     if thread_count <= MAX_THREADS
@@ -86,100 +89,89 @@ module NVDParser
     end
     
     entries.each do |entry|
-      puts "START: #{entry.cve} [#{i}/#{num_entries}]"
+      puts "Store: #{entry.cve} [#{i}/#{num_entries}]"
       i += 1
       
       save_entry(entry)
     end
+    total_time = (Time.now - start_time).round
+    puts "[*] All Entries stored, this has taken #{total_time/60}:#{total_time%60}"
   end
   
   def self.save_entry entry
 
     #Create NVD-Entry and attributes
-    db_entry = NvdEntry.find_or_create_by_cve(entry.cve)
-    db_entry.update_attributes({
+    
+    cvss_params = {}
+    if entry.cvss
+      cvss_params = {
+        :score => entry.cvss.score,
+        :source => entry.cvss.source,
+        :generated_on => DateTime.xmlschema(entry.cvss.generated_on_datetime),
+        :access_vector => entry.cvss.access_vector,
+        :access_complexity => entry.cvss.access_complexity,
+        :authentication => entry.cvss.authentication,
+        :confidentiality_impact => ConfidentialityImpact.create({ :impact_id => Impact.find_by_name(entry.cvss.confidentiality_impact).id}),
+        :integrity_impact => IntegrityImpact.create({ :impact_id => Impact.find_by_name(entry.cvss.integrity_impact).id }),
+        :availability_impact => AvailabilityImpact.create({ :impact_id => Impact.find_by_name(entry.cvss.availability_impact).id })
+      }
+    end
+    
+    params = {
       :cve => entry.cve,
       :cwe => entry.cwe,
       :summary => entry.summary,
       :published => DateTime.xmlschema(entry.published_datetime),
-      :last_modified => DateTime.xmlschema(entry.last_modified_datetime)
-    })
-    if entry.cvss
-      #Create CVSS Entry
-      time = entry.cvss.generated_on_datetime ? DateTime.xmlschema(entry.cvss.generated_on_datetime) : nil
-      cvss_params = {
-        :score => entry.cvss.score,
-        :source => entry.cvss.source,
-        :generated_on => time,
-        :access_vector => entry.cvss.access_vector,
-        :access_complexity => entry.cvss.access_complexity,
-        :authentication => entry.cvss.authentication
-      }
-
-      integrity_params = {
-        :impact_id => Impact.find_by_name(entry.cvss.integrity_impact).id
-      }
-
-      confidentiality_params = {
-        :impact_id => Impact.find_by_name(entry.cvss.confidentiality_impact).id
-      }
-      
-      availability_params = {
-        :impact_id => Impact.find_by_name(entry.cvss.availability_impact).id
-      }
-
-      unless db_entry.cvss
-        db_entry.cvss = Cvss.create(cvss_params)
-        c_impact = ConfidentialityImpact.create(confidentiality_params)
-        i_impact = IntegrityImpact.create(integrity_params)
-        a_impact = AvailabilityImpact.create(availability_params)
-        db_entry.cvss.confidentiality_impact = c_impact
-        db_entry.cvss.integrity_impact = i_impact
-        db_entry.cvss.availability_impact = a_impact
-        db_entry.cvss.save!
-      else
-        db_entry.cvss.update_attributes(cvss_params)
-        db_entry.cvss.confidentiality_impact.update_attributes(confidentiality_params)
-        db_entry.cvss.integrity_impact.update_attributes(integrity_params)
-        db_entry.cvss.availability_impact.update_attributes(availability_params)
-      end
-    end
-    
-    entry.vulnerable_configurations.each do |product|
-      values = product.split(":")
-      values[1].sub!("/", "")
-      # values = [cpe, part, vendor, product, version, update, edition, language]
-      p = Product.find_or_create_by_part_and_vendor_and_product_and_version_and_update_nr_and_edition_and_language(
-        values[1], values[2], values[3], values[4], values[5], values[6], values[7])
-      VulnerableConfiguration.find_or_create_by_nvd_entry_id_and_product_id(db_entry.id, p.id)
-    end
+      :last_modified => DateTime.xmlschema(entry.last_modified_datetime),
+      :cvss => Cvss.create(cvss_params)
+    }
+    db_entry = NvdEntry.create(params)
     
     entry.vulnerable_software.each do |product|
       values = product.split(":")
       values[1].sub!("/", "")
       # values = [cpe, part, vendor, product, version, update, edition, language]
-      p = Product.find_or_create_by_part_and_vendor_and_product_and_version_and_update_nr_and_edition_and_language(
-        values[1], values[2], values[3], values[4], values[5], values[6], values[7])
+      p = Product.create({
+            :part => values[1],
+            :vendor => values[2],
+            :product => values[3],
+            :version => values[4],
+            :update_nr => values[5],
+            :edition => values[6],
+            :language => values[7],
+          })
       VulnerableSoftware.find_or_create_by_nvd_entry_id_and_product_id(db_entry.id, p.id)
     end
-
+    
     entry.references.each do |ref|
-      r = VulnerabilityReference.find_or_create_by_name_and_link_and_source_and_nvd_entry_id(ref.name, 
-                                                                                ref.link, ref.source, db_entry.id)        
+      VulnerabilityReference.create({
+        :name => ref.name,
+        :link => ref.link,
+        :source => ref.source,
+        :nvd_entry_id => db_entry.id
+      })
     end
     
     db_entry.save!
   end
   
   def self.parse_nvd_file file
-
+    start_time = Time.now
+    puts "[*] Start parsing \"#{file}\""
     doc = Nokogiri::XML(File.open(file))
   
     entries = []
-  
+    entry_count = 0
     doc.css('nvd > entry').each do |entry|
-      entries << single_entry(entry)     
+      entries << single_entry(entry)
+      entry_count += 1
+      if entry_count % 100 == 0
+        puts "I've parsed #{entry_count} CVE Entries"
+      end
     end
+    end_time = Time.now
+    puts "[*] Finished parsing, I've found #{entries.size} entries. "+
+        "Parsing time is #{(end_time-start_time).round} seconds."
     entries
   end
   
@@ -279,4 +271,4 @@ module NVDParser
 
 end
 
-NVDParser::save_entries_to_models('cveparser/nvdcve-2.0-2010.xml')
+NVDParser::save_entries_to_models('cveparser/nvdcve-2.0-recent.xml')

@@ -1,5 +1,5 @@
 class Cvss < ActiveRecord::Base
-  belongs_to :confidentiality_impact
-  belongs_to :availability_impact
-  belongs_to :integrity_impact
+  has_one :confidentiality_impact
+  has_one :availability_impact
+  has_one :integrity_impact
 end

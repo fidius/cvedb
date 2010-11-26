@@ -5,6 +5,7 @@ class CreateImpacts < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :impacts, :name
   end
 
   def self.down

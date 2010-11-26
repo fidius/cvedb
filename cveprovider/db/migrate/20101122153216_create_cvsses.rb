@@ -7,9 +7,7 @@ class CreateCvsses < ActiveRecord::Migration
       t.string :access_vector
       t.string :access_complexity
       t.string :authentication
-      t.integer :integrity_impact_id
-      t.integer :confidentiality_impact_id
-      t.integer :availability_impact_id
+      t.integer :nvd_entry_id
 
       t.timestamps
     end

@@ -6,6 +6,8 @@ class CreateVulnerableSoftwares < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :vulnerable_softwares, :nvd_entry_id
+    add_index :vulnerable_softwares, :product_id
   end
 
   def self.down
