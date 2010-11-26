@@ -5,6 +5,8 @@
 
 module NVDParser
   
+  MAX_THREADS  = 4
+
   class NVDEntry
     
     attr_accessor :cve, :vulnerable_configurations, :cvss, :vulnerable_software,
@@ -75,6 +77,14 @@ module NVDParser
     puts "Finished parsing: Found #{num_entries} entries"   
     i = 1
     thread_count = 0
+    if thread_count <= MAX_THREADS
+      thread_count += 1
+      Thread.new do
+      save_entry(entry)
+      thread_count -= 1
+      end
+    end
+    
     entries.each do |entry|
       puts "START: #{entry.cve} [#{i}/#{num_entries}]"
       i += 1
