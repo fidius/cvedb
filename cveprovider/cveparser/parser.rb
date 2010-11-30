@@ -6,6 +6,9 @@
 module NVDParser
   
   MAX_THREADS  = 4
+  # We teporarily store the vuln products in a hash to fix duplicates easily.
+  # The hash looks like this: { :"vulnerable_software_string" => [ cves ] }
+  $products = {}
 
   class NVDEntry
     
@@ -175,6 +178,7 @@ module NVDParser
     entries
   end
   
+  
   def self.single_entry entry
     params = {}
     params[:cve] = entry.attributes['id'].value
@@ -189,6 +193,7 @@ module NVDParser
       
     NVDEntry.new(params)
   end
+  
   
   def self.cwe entry
     cwe = entry.at_css('vuln|cwe')
@@ -271,4 +276,4 @@ module NVDParser
 
 end
 
-NVDParser::save_entries_to_models('cveparser/nvdcve-2.0-recent.xml')
+NVDParser::save_entries_to_models('cveparser/nvdcve-2.0-2010.xml')
