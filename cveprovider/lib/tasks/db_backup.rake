@@ -1,7 +1,7 @@
 require 'find'
 
 BACKUP_DIR = "db"
-RAILS_ENV = "development"
+RAILS_ENV = "development" # TODO improve :D
 MAX_BACKUPS = 5
 
 # Source: http://blog.craigambrose.com/articles/2007/03/01/a-rake-task-for-database-backups

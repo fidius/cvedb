@@ -319,4 +319,4 @@ module NVDParser
 
 end
 
-NVDParser::save_entries_to_models('cveparser/nvdcve-2.0-2010.xml')
+NVDParser::save_entries_to_models(ARGV[0])
