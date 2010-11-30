@@ -97,8 +97,13 @@ module NVDParser
       
       save_entry(entry)
     end
+    # Until now, the products are only remembered in the $products hash, they
+    # are saved when all products are collected so we dont have duplicates
+    save_products
+    
     total_time = (Time.now - start_time).round
-    puts "[*] All Entries stored, this has taken #{total_time/60}:#{total_time%60}"
+    puts "[*] All Entries & Products stored, this has taken "+
+        "#{total_time/60}:#{total_time%60}"
   end
   
   def self.save_entry entry
@@ -131,19 +136,26 @@ module NVDParser
     db_entry = NvdEntry.create(params)
     
     entry.vulnerable_software.each do |product|
-      values = product.split(":")
-      values[1].sub!("/", "")
-      # values = [cpe, part, vendor, product, version, update, edition, language]
-      p = Product.create({
-            :part => values[1],
-            :vendor => values[2],
-            :product => values[3],
-            :version => values[4],
-            :update_nr => values[5],
-            :edition => values[6],
-            :language => values[7],
-          })
-      VulnerableSoftware.find_or_create_by_nvd_entry_id_and_product_id(db_entry.id, p.id)
+      
+      if $products.has_key? product.to_sym
+        $products[product.to_sym] << entry.cve
+      else
+        $products[product.to_sym] = [ entry.cve ]
+      end
+      
+      #values = product.split(":")
+      #values[1].sub!("/", "")
+      ## values = [cpe, part, vendor, product, version, update, edition, language]
+      #p = Product.create({
+      #      :part => values[1],
+      #      :vendor => values[2],
+      #      :product => values[3],
+      #      :version => values[4],
+      #      :update_nr => values[5],
+      #      :edition => values[6],
+      #      :language => values[7],
+      #    })
+      #VulnerableSoftware.find_or_create_by_nvd_entry_id_and_product_id(db_entry.id, p.id)
     end
     
     entry.references.each do |ref|
@@ -157,6 +169,37 @@ module NVDParser
     
     db_entry.save!
   end
+  
+  
+  def self.save_products
+    puts "[*] I'm storing the products now (#{$products.size})"
+    i = 0
+    $products.each_pair do |product, cves|
+      values = product.to_s.split(":")
+      values[1].sub!("/", "")
+      # values = [cpe, part, vendor, product, version, update, edition, language]
+      p = Product.create({
+            :part => values[1],
+            :vendor => values[2],
+            :product => values[3],
+            :version => values[4],
+            :update_nr => values[5],
+            :edition => values[6],
+            :language => values[7]
+          })
+      cves.each do |cve|
+        # Save the relations between vulnerable software and nvd_entries
+        VulnerableSoftware.find_or_create_by_nvd_entry_id_and_product_id(
+          NvdEntry.find_by_cve(cve).id, p.id)
+      end
+      if i % 100 == 0
+        puts "Stored 100 products [#{i}/#{$products.size}]"
+      end
+      i += 1
+    end
+    puts "[*] All products stored."
+  end
+  
   
   def self.parse_nvd_file file
     start_time = Time.now
