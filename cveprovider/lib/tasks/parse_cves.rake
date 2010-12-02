@@ -10,18 +10,13 @@ RECENT_XML = "nvdcve-2.0-recent.xml"
 namespace :nvd do 
   desc 'Parses local XML-File.'
   task :parse, :file_name do |t,args|
-    if Rails.version[0].to_i < 3
-      sh "ruby script/runner #{Rails.root.to_s}/cveparser/parser.rb #{XML_DIR+args[:file_name]}"
-    else
-      sh "rails runner #{Rails.root.to_s}/cveparser/parser.rb #{XML_DIR+args[:file_name]}"
-    end
+    parse "#{XML_DIR + args[:file_name]}"
   end
 
   desc 'Downloads XML-File from NVD. (with names from nvd:list_remote)'
   task :get, :xml_name do |t,args|
     if args[:xml_name]
-      FileUtils.mkdir_p(XML_DIR)
-      sh "wget -P#{XML_DIR} #{BASE_URL + args[:xml_name]}"
+      wget args[:xml_name]
     else
       puts "Please call task with 'rake nvd:get[xml_name]'!"
     end 
@@ -57,4 +52,17 @@ namespace :nvd do
   task :update do
     sh "wget -P#{XML_DIR} #{BASE_URL + RECENT_XML}"
   end
+end
+
+def parse file
+  if Rails.version[0].to_i < 3
+    sh "ruby script/runner #{Rails.root.to_s}/cveparser/parser.rb #{file}"
+  else
+    sh "rails runner #{Rails.root.to_s}/cveparser/parser.rb #{file}"
+  end
+end
+
+def wget file
+  FileUtils.mkdir_p(XML_DIR)
+  sh "wget -P#{XML_DIR} #{BASE_URL + file}"
 end
