@@ -67,5 +67,5 @@ end
 
 def wget file
   FileUtils.mkdir_p(XML_DIR)
-  sh "wget -P#{XML_DIR} #{BASE_URL + file}"
+  sh "wget -O#{XML_DIR + file} #{BASE_URL + file}"
 end
