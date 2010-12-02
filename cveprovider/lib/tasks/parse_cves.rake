@@ -1,24 +1,26 @@
-# rake nvd:parse FILE=
-
 require 'open-uri'
 require 'net/http'
 
 BASE_URL = "http://static.nvd.nist.gov/feeds/xml/cve/"
 XML_DIR = "cveparser/xml/"
-RECENT_XML = "nvdcve-2.0-recent.xml"
+
+# modified xml includes all recent published and modified cve entries
+MODIFIED_XML = "nvdcve-2.0-modified.xml"
 
 namespace :nvd do 
   desc 'Parses local XML-File.'
   task :parse, :file_name do |t,args|
-    parse "#{XML_DIR + args[:file_name]}"
+    parse args[:file_name]
   end
+  
 
+  # TODO: Prüfen ob die Dateien identisch sind (Größe + Hash)
   desc 'Downloads XML-File from NVD. (with names from nvd:list_remote)'
   task :get, :xml_name do |t,args|
     if args[:xml_name]
       wget args[:xml_name]
     else
-      puts "Please call task with 'rake nvd:get[xml_name]'!"
+      puts "Please call task with 'rake nvd:get[<xml_name>]'!"
     end 
   end
   
@@ -32,7 +34,7 @@ namespace :nvd do
     end
   end  
 
-  desc 'Lists theremotely available NVD-XML-Datafeeds.'
+  desc 'Lists the remotely available NVD-XML-Datafeeds.'
   task :list_remote do
     doc = Nokogiri::HTML(open("http://nvd.nist.gov/download.cfm"))
     links = doc.css("div.rightbar > a")
@@ -47,18 +49,19 @@ namespace :nvd do
     puts xmls
   end
 
-  # TODO update vervollständigen
-  desc "Downloads the recent.xml from nvd.org and stores it's content in the db"
+  #TODO: prüfen, ob update auch in parser.rb geht
+  desc "Downloads the modified.xml from nvd.org and stores it's content in the database."
   task :update do
-    sh "wget -P#{XML_DIR} #{BASE_URL + RECENT_XML}"
+    wget MODIFIED_XML
+    parse MODIFIED_XML
   end
 end
 
 def parse file
   if Rails.version[0].to_i < 3
-    sh "ruby script/runner #{Rails.root.to_s}/cveparser/parser.rb #{file}"
+    sh "ruby script/runner #{Rails.root.to_s}/cveparser/parser.rb #{XML_DIR + file}"
   else
-    sh "rails runner #{Rails.root.to_s}/cveparser/parser.rb #{file}"
+    sh "rails runner #{Rails.root.to_s}/cveparser/parser.rb #{XML_DIR + file}"
   end
 end
 
