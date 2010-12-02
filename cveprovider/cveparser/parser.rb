@@ -6,6 +6,7 @@
 module NVDParser
   
   MAX_THREADS  = 4
+  MODIFIED_XML = "nvdcve-2.0-modified.xml"
   # We teporarily store the vuln products in a hash to fix duplicates easily.
   # The hash looks like this: { :"vulnerable_software_string" => [ cves ] }
   $products = {}
@@ -75,6 +76,13 @@ module NVDParser
   
   def self.save_entries_to_models file
     
+    xml_file = file.split("/").last
+    xml_db_entry = Xml.find_by_name(xml_file)
+
+    if xml_db_entry and xml_file != MODIFIED_XML
+      puts "\n#{xml_file} is already in the database! Please use 'rake nvd:update' to fetch the most recent updates."
+      return
+    end    
     entries = parse_nvd_file file
     
     start_time = Time.now
@@ -101,6 +109,14 @@ module NVDParser
     # are saved when all products are collected so we dont have duplicates
     save_products
     
+    params = {:name => xml_file, :create_time => Time.now.to_datetime}
+    
+    if xml_db_entry
+      xml_db_entry.update_attributes(params[:create_time])
+    else
+      Xml.create(params)      
+    end
+
     total_time = (Time.now - start_time).round
     puts "[*] All Entries & Products stored, this has taken "+
         "#{total_time/60}:#{total_time%60}"
@@ -316,7 +332,7 @@ module NVDParser
     val = node.at_css(xml)
     val.children.to_s if val
   end
-
+  
 end
 
 NVDParser::save_entries_to_models(ARGV[0])
