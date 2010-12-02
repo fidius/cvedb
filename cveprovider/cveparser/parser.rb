@@ -2,77 +2,17 @@
 
 # Benoetigt Ruby Version >= 1.9, ansonsten gibt es einen Fehler in der cvss
 # Methode ("odd number list for Hash").
+require "#{Rails.root.to_s}/cveparser/parser_model"
 
 module NVDParser
+  
+  include NVDParserModel
   
   MAX_THREADS  = 4
   MODIFIED_XML = "nvdcve-2.0-modified.xml"
   # We teporarily store the vuln products in a hash to fix duplicates easily.
   # The hash looks like this: { :"vulnerable_software_string" => [ cves ] }
   $products = {}
-
-  class NVDEntry
-    
-    attr_accessor :cve, :vulnerable_configurations, :cvss, :vulnerable_software,
-        :published_datetime, :last_modified_datetime, :cwe, :summary,
-        :references
-    
-    def initialize(params)
-      @vulnerable_configurations = params[:vulnerable_configurations]
-      @vulnerable_software       = params[:vulnerable_software]
-      @published_datetime        = params[:published_datetime]
-      @last_modified_datetime    = params[:last_modified_datetime]
-      @cvss       = params[:cvss]
-      @cve        = params[:cve]
-      @cwe        = params[:cwe]
-      @summary    = params[:summary]
-      @references = params[:references]
-    end
-    
-    def to_s
-      puts "NVDEntry\n CVE-Nr\t: #{cve}\n CVSS\t: #{cvss.score}\n"+
-          " CWE\t: #{cwe}"
-    end
-    
-  end
-  
-  
-  class Reference
-    
-    attr_accessor :source, :link, :name
-    
-    def initialize(params)
-      @source = params[:source]
-      @link   = params[:link]
-      @name   = params[:name]
-    end
-    
-    def to_s
-      "source=#{source}, link=#{link}, name=#{name}"
-    end
-    
-  end
-  
-  
-  class Cvss_
-    
-    attr_accessor :score, :access_vector, :access_complexity, :authentication,
-        :confidentiality_impact, :integrity_impact, :availability_impact,
-        :source, :generated_on_datetime
-    
-    def initialize(params)
-      @source         = params[:source]
-      @score          = params[:score]
-      @access_vector  = params[:access_vector]
-      @authentication = params[:authentication]
-      @access_complexity      = params[:access_complexity]
-      @integrity_impact       = params[:integrity_impact]
-      @availability_impact    = params[:availability_impact]
-      @confidentiality_impact = params[:confidentiality_impact]
-      @generated_on_datetime  = params[:generated_on_datetime]
-    end
-    
-  end
   
   def self.save_entries_to_models file
     
@@ -250,7 +190,7 @@ module NVDParser
     params[:summary] = child_value(entry, 'vuln|summary')
     params[:references] = references(entry)
       
-    NVDEntry.new(params)
+    NVDParserModel::NVDEntry.new(params)
   end
   
   
@@ -267,7 +207,7 @@ module NVDParser
       ref_params[:source] = child_value(references, 'vuln|source')
       ref_params[:link] = references.at_css('vuln|reference').attributes['href'].value
       ref_params[:name] = child_value(references, 'vuln|reference')
-      ref_array << Reference.new(ref_params)
+      ref_array << NVDParserModel::Reference.new(ref_params)
     end
     ref_array
   end
@@ -303,7 +243,7 @@ module NVDParser
         value = elem ? elem.children.to_s : nil
         cvss_params[hash_key] = value
       end
-      Cvss_.new(cvss_params)
+      NVDParserModel::Cvss_.new(cvss_params)
     end
   end
   
