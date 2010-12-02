@@ -266,6 +266,42 @@ module NVDParser
     end
   end
   
+  def self.fix_product_duplicates
+    products = Product.all
+    puts "[*] I'm checking #{products.size} products for duplicates."+
+         "Building a hash with unique products..."
+    cleaned_products = {}
+    products.each do |p|
+      product_name = ("#{p.part}:#{p.vendor}:#{p.product}:#{p.version}"+
+          ":#{p.update_nr}:#{p.edition}:#{p.language}").to_sym
+      
+      # There is another product which has the same content, so we need to
+      # change the vulnerable_software.product_id's
+      if cleaned_products.has_key? product_name
+        p.vulnerable_softwares.each do |vuln_s|
+          vuln_s.product_id = cleaned_products[product_name]
+          vuln_s.save!
+        end
+        
+      # this is a newly found product so we remember its id
+      else
+        cleaned_products[product_name] = p.id
+      end
+    end
+    puts "[*] Hash complete. I'll delete all non-unique products now..."
+    # We now have a hash which has only unique products and destroy all other
+    # products
+    delete_count = 0
+    products.each do |product|
+      unless cleaned_products.has_value?(product.id)
+        puts "Duplicate ID=#{product.id}"
+        product.destroy
+        delete_count += 1
+      end
+    end
+    puts "[*] I've deleted #{delete_count} duplicates."
+  end
+  
   private
   
   def self.child_value(node, xml)
@@ -275,4 +311,5 @@ module NVDParser
   
 end
 
-NVDParser::save_entries_to_models(ARGV[0])
+#NVDParser::save_entries_to_models(ARGV[0])
+NVDParser::fix_product_duplicates
