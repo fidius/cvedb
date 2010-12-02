@@ -326,14 +326,14 @@ module NVDParser
     end
   end
   
-  def fix_product_duplicates
+  def self.fix_product_duplicates
     products = Product.all
     puts "[*] I'm checking #{products.size} products for duplicates."+
          "Building a hash with unique products..."
     cleaned_products = {}
     products.each do |p|
-      product_name = "#{p.part}:#{p.vendor}:#{p.product}:#{p.version}"+
-          ":#{p.update}:#{p.edition}:#{p.language}".to_sym
+      product_name = ("#{p.part}:#{p.vendor}:#{p.product}:#{p.version}"+
+          ":#{p.update_nr}:#{p.edition}:#{p.language}").to_sym
       
       # There is another product which has the same content, so we need to
       # change the vulnerable_software.product_id's
@@ -355,7 +355,7 @@ module NVDParser
     products.each do |product|
       unless cleaned_products.has_value?(product.id)
         puts "Duplicate ID=#{product.id}"
-        product.destroy! 
+        product.destroy
         delete_count += 1
       end
     end
@@ -371,4 +371,5 @@ module NVDParser
   
 end
 
-NVDParser::save_entries_to_models(ARGV[0])
+#NVDParser::save_entries_to_models(ARGV[0])
+NVDParser::fix_product_duplicates
