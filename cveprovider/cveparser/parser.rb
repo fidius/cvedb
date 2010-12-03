@@ -25,10 +25,20 @@ module NVDParser
     end_time = Time.now
     puts "[*] Finished parsing, I've found #{entries.size} entries. "+
         "Parsing time is #{(end_time-start_time).round} seconds."
-    entries
+    
+    RailsStore::save_entries_to_models(file.split("/").last, entries)
+  end
+
+  def self.print_entries file
+    entries = parse_nvd_file(file)
+    puts "Entry count = #{entries.size}"
+    entries.each do |entry|
+      puts entry.to_s
+    end
   end
   
-  
+  private  
+
   def self.single_entry entry
     params = {}
     params[:cve] = entry.attributes['id'].value
@@ -42,8 +52,7 @@ module NVDParser
     params[:references] = references(entry)
       
     NVDParserModel::NVDEntry.new(params)
-  end
-  
+  end  
   
   def self.cwe entry
     cwe = entry.at_css('vuln|cwe')
@@ -108,18 +117,6 @@ module NVDParser
     v_confs
   end
   
-  
-  def self.print_entries file
-    entries = parse_nvd_file(file)
-    puts "Entry count = #{entries.size}"
-    entries.each do |entry|
-      puts entry.to_s
-    end
-  end
-  
-  
-  private
-  
   def self.child_value(node, xml)
     val = node.at_css(xml)
     val.children.to_s if val
@@ -127,5 +124,4 @@ module NVDParser
   
 end
 
-RailsStore::save_entries_to_models(ARGV[0])
-#NVDParser::fix_product_duplicates
+NVDParser.parse_nvd_file(ARGV[0])

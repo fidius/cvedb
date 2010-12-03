@@ -6,16 +6,14 @@ module RailsStore
   # The hash looks like this: { :"vulnerable_software_string" => [ cves ] }
   $products = {}
   
-  def self.save_entries_to_models file
+  def self.save_entries_to_models xml_file, entries
     
-    xml_file = file.split("/").last
     xml_db_entry = Xml.find_by_name(xml_file)
 
     if xml_db_entry and xml_file != MODIFIED_XML
       puts "\n#{xml_file} is already in the database! Please use 'rake nvd:update' to fetch the most recent updates."
       return
     end    
-    entries = parse_nvd_file file
     
     start_time = Time.now
     puts "[*] Storing the CVE-Entries in DB"
