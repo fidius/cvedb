@@ -8,16 +8,16 @@ module NVDParser
   include RailsStore
   
   def self.parse_nvd_file file
+    
     doc = Nokogiri::XML(File.open(file))
     doc.css("nvd").each do |nvd| 
       version = nvd.attributes['nvd_xml_version'].value
-      if version != 2.0
+      if version != "2.0"
         puts "Your XML has the wrong version (#{version}). " + 
              "The CVE-Parser can only handle XML-Feeds in Version 2.0."
         return
       end 
     end
-
 
     start_time = Time.now
     puts "[*] Start parsing \"#{file}\""
