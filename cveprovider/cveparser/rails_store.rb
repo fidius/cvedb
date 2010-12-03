@@ -54,8 +54,6 @@ module RailsStore
   
   def self.save_entry entry
 
-    #Create NVD-Entry and attributes
-    
     cvss_params = {}
     if entry.cvss
       cvss_params = {
