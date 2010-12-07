@@ -1,0 +1,96 @@
+
+\documentclass[authorinfoot]{fidius-p}
+% \usepackage{tabularx}
+\author{AB \and JF \and LM \and DK}
+% \title[short title]{long title}
+% optional: \subtitle[short subtitle]{long subtitle}
+\title{OpenVAS \& CVE-DB}
+\subtitle{Zwischenpräsentation}
+\date{10.12.2010}
+
+\setcounter{tocdepth}{1}
+
+\setbeamertemplate{bibliography item}[text]
+
+\setbeamertemplate{bibliography entry title}{}
+\setbeamertemplate{bibliography entry location}{}
+\setbeamertemplate{bibliography entry note}{}
+
+\bibliographystyle{is-plain}
+
+\begin{document}
+
+\frame{\titlepage}
+\frame{\tableofcontents}
+
+\section{OpenVAS}
+\secframe{Ziele}{
+  \begin{itemize}
+    \item Wir wollen evaluieren, ob sich OpenVAS zur Ermittlung von CVE-Nummern
+auf Basis zuvor gefundener Schwachstellen verwenden lässt.
+    \subitem{Dadurch Reduzierung der verwendeten Exploits.}
+  \end{itemize}
+}
+
+\secframe{Ergebnisse}{
+  \begin{itemize}
+    \item OpenVAS Architektur aufwendig zu installieren
+    \subitem{Scanner, Manager, Client, Benutzer und Zertifikate}
+    \item libopenvas schlecht dokumentiert.
+    \item Viele Schwachstellentests nicht für remote-Exploits geeignet.
+    \item Scan-Ergebnisse enthalten selten CVE-Nummern
+    \subitem{Und diese entsprechen nicht immer den in Metasploit verwendeten}
+  \end{itemize}
+}
+
+\secframe{Retrospektive}{ % TODO mehr sinnvolles
+  \begin{itemize}
+    \item Regelmäßige Gruppentreffen (wie immer) sinnvoll.
+    \item Normales Beleidigungsniveau (wie immer).
+  \end{itemize}
+}
+
+\section{CVE-DB}
+\secframe{Ziele}{
+  \begin{itemize}
+    \item Abfrage von CVE-Nummern anhand vorgefundener Software
+    \item Bereitstellen der Daten für andere FIDIUS Komponenten
+  \end{itemize}
+}
+
+\secframe{Ergebnisse}{
+  \begin{itemize}
+    \item Verwendung der NVD-Datenbank
+    \item Einlesen von XML-Dateien, die CVE-Einträge beinhalten
+    \item Datenbankschema für eine Rails-Anwendung
+    \item Speichern der CVE-Einträge in Rails-DB
+    \subitem{Abfrage über Active Record}
+    \item Rake-Tasks um zu parsen, neue XML-Dateien abzurufen, etc.
+    \subitem{\texttt{nvd:parse[<datei>], nvd:get[<datei>], nvd:list\_local,
+nvd:list\_remote, nvd:update} (eckige Klammern gehören dazu)}
+  \end{itemize}
+}
+
+\secframe{Probleme}{
+  \begin{itemize}
+    \item Sehr große Datenmengen die gespeichert werden müssen
+    \item Gefahr der Redundanz bei CVE-Einträgen die aktualisiert werden
+    \item Überprüfung auf Redundanz dauert sehr lange
+    \subitem{ca. 4 1/2 Stunden pro 30MB-XML wenn alle Attribute auf Redundanzen
+überprüft werden.}
+    \subitem{Unser Lösungsansatz: Erst ohne Überprüfung speichern, später
+Redundanzen beseitigen.}
+  \end{itemize}
+}
+
+\secframe{Retrospektive}{
+  \begin{itemize}
+    \item Pair-Programming sinnvoll
+    \item Einstieg in Rails dadurch einfacher
+    \item Freitags gemeinsam arbeiten sinnvoll, dadurch kurze
+Kommunikationswege zwischen den Gruppen
+  \end{itemize}
+}
+
+\end{document}
+
