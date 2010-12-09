@@ -1,7 +1,7 @@
 
 \documentclass[authorinfoot]{fidius-p}
 % \usepackage{tabularx}
-\author{AB \and JF \and LM \and DK}
+\author{AB \and JF \and LM}
 % \title[short title]{long title}
 % optional: \subtitle[short subtitle]{long subtitle}
 \title{OpenVAS \& CVE-DB}
@@ -26,8 +26,8 @@
 \section{OpenVAS}
 \secframe{Ziele}{
   \begin{itemize}
-    \item Wir wollen evaluieren, ob sich OpenVAS zur Ermittlung von CVE-Nummern
-auf Basis zuvor gefundener Schwachstellen verwenden lässt.
+    \item Ermittlung von CVE-Nummern zu offenen Schwachstellen eines Zielsystems
+    \item Evaluierung ob OpenVAS dazu verwendet werden kann \& sollte.
     \subitem{Dadurch Reduzierung der verwendeten Exploits.}
   \end{itemize}
 }
@@ -41,12 +41,15 @@ auf Basis zuvor gefundener Schwachstellen verwenden lässt.
     \item Scan-Ergebnisse enthalten selten CVE-Nummern
     \subitem{Und diese entsprechen nicht immer den in Metasploit verwendeten}
   \end{itemize}
+  \par
+  $\rightarrow$ OpenVAS nicht praktikabel, Suche nach Alternativen\\
+  $\rightarrow$ Eigene Datenbank auf Basis der NVD
 }
 
 \secframe{Retrospektive}{ % TODO mehr sinnvolles
   \begin{itemize}
-    \item Regelmäßige Gruppentreffen (wie immer) sinnvoll.
-    \item Normales Beleidigungsniveau (wie immer).
+    \item Gruppenarbeit war gut, gemeinsames Arbeiten
+    \item OpenVAS leider nicht für das gesetzte Ziel einsetzbar
   \end{itemize}
 }
 
@@ -80,6 +83,16 @@ nvd:list\_remote, nvd:update} (eckige Klammern gehören dazu)}
 überprüft werden.}
     \subitem{Unser Lösungsansatz: Erst ohne Überprüfung speichern, später
 Redundanzen beseitigen.}
+  \end{itemize}
+}
+
+\secframe{Ausblick}{
+  \begin{itemize}
+    \item Weitere Rake Tasks (z.B: Initialisierung)
+    \item Mehr Automatisierung (Zusammenfassung einiger Rake Tasks)
+    \item kleinere Code Erweiterungen \& refactoring
+    \item Tests
+    \item (Veröffentlichung auf Github?)
   \end{itemize}
 }
 
