@@ -26,8 +26,9 @@
 \section{OpenVAS}
 \secframe{Ziele}{
   \begin{itemize}
-    \item Wir wollen evaluieren, ob sich OpenVAS zur Ermittlung von CVE-Nummern
-auf Basis zuvor gefundener Schwachstellen verwenden lässt.
+    \item Wir wollen evaluieren, ob sich OpenVAS zur Ermittlung von Schwachstellen
+auf Basis von zurvor gesammelten Informationen (NMAP) verwenden lässt.
+    \item Nur gefundene Schwachstellen in einem System ausnutzen
     \subitem{Dadurch Reduzierung der verwendeten Exploits.}
   \end{itemize}
 }
@@ -37,9 +38,10 @@ auf Basis zuvor gefundener Schwachstellen verwenden lässt.
     \item OpenVAS Architektur aufwendig zu installieren
     \subitem{Scanner, Manager, Client, Benutzer und Zertifikate}
     \item libopenvas schlecht dokumentiert.
-    \item Viele Schwachstellentests nicht für remote-Exploits geeignet.
-    \item Scan-Ergebnisse enthalten selten CVE-Nummern
-    \subitem{Und diese entsprechen nicht immer den in Metasploit verwendeten}
+    \item Viele gefundene Schwachstellentests nicht für remote-Exploits geeignet.
+    \item Selten wurde zu gefundenen Schwachstellen auch eine CVE-Nummern gefunden
+    \item Es werden nichtmal alle Schwachstellen erkannt
+    \subitem{ms08\_67\_netapi} 
   \end{itemize}
 }
 
