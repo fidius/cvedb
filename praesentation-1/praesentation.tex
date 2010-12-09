@@ -27,29 +27,29 @@
 \secframe{Ziele}{
   \begin{itemize}
     \item Ermittlung von CVE-Nummern zu offenen Schwachstellen eines Zielsystems
-    \item Evaluierung ob OpenVAS dazu verwendet werden kann \& sollte.
+    \item Evaluierung, ob OpenVAS dazu geeignet ist.
     \subitem{Dadurch Reduzierung der verwendeten Exploits.}
   \end{itemize}
 }
 
 \secframe{Ergebnisse}{
   \begin{itemize}
-    \item OpenVAS Architektur aufwendig zu installieren
+    \item OpenVAS-Architektur aufwändig zu installieren
     \subitem{Scanner, Manager, Client, Benutzer und Zertifikate}
     \item libopenvas schlecht dokumentiert.
-    \item Viele Schwachstellentests nicht für remote-Exploits geeignet.
+    \item Viele Schwachstellentests nicht für Remote-Exploits geeignet.
     \item Scan-Ergebnisse enthalten selten CVE-Nummern
-    \subitem{Und diese entsprechen nicht immer den in Metasploit verwendeten}
+    \subitem{Und diese entsprechen nicht immer den in Metasploit verwendeten.}
   \end{itemize}
   \par
   $\rightarrow$ OpenVAS nicht praktikabel, Suche nach Alternativen\\
   $\rightarrow$ Eigene Datenbank auf Basis der NVD
 }
 
-\secframe{Retrospektive}{ % TODO mehr sinnvolles
+\secframe{Retrospektive}{
   \begin{itemize}
     \item Gruppenarbeit war gut, gemeinsames Arbeiten
-    \item OpenVAS leider nicht für das gesetzte Ziel einsetzbar
+    \item OpenVAS leider nicht für das gesetzte Ziel einsetzbar.
   \end{itemize}
 }
 
@@ -57,14 +57,14 @@
 \secframe{Ziele}{
   \begin{itemize}
     \item Abfrage von CVE-Nummern anhand vorgefundener Software
-    \item Bereitstellen der Daten für andere FIDIUS Komponenten
+    \item Bereitstellung der Daten für andere FIDIUS-Komponenten
   \end{itemize}
 }
 
 \secframe{Ergebnisse}{
   \begin{itemize}
     \item Verwendung der NVD-Datenbank
-    \item Einlesen von XML-Dateien, die CVE-Einträge beinhalten
+    \item Einlesen von XML-Dateien, die CVE-Einträge beinhalten.
     \item Datenbankschema für eine Rails-Anwendung
     \item Speichern der CVE-Einträge in Rails-DB
     \subitem{Abfrage über Active Record}
@@ -77,9 +77,9 @@ nvd:list\_remote, nvd:update} (eckige Klammern gehören dazu)}
 \secframe{Probleme}{
   \begin{itemize}
     \item Sehr große Datenmengen die gespeichert werden müssen
-    \item Gefahr der Redundanz bei CVE-Einträgen die aktualisiert werden
+    \item Gefahr der Redundanz bei CVE-Einträgen, die aktualisiert werden.
     \item Überprüfung auf Redundanz dauert sehr lange
-    \subitem{ca. 4 1/2 Stunden pro 30MB-XML wenn alle Attribute auf Redundanzen
+    \subitem{ca. 4 1/2 Stunden pro 30MB-XML, wenn alle Attribute auf Redundanzen
 überprüft werden.}
     \subitem{Unser Lösungsansatz: Erst ohne Überprüfung speichern, später
 Redundanzen beseitigen.}
@@ -88,9 +88,9 @@ Redundanzen beseitigen.}
 
 \secframe{Ausblick}{
   \begin{itemize}
-    \item Weitere Rake Tasks (z.B: Initialisierung)
+    \item Weitere Rake-Tasks (z.B: Initialisierung)
     \item Mehr Automatisierung (Zusammenfassung einiger Rake Tasks)
-    \item kleinere Code Erweiterungen \& refactoring
+    \item kleinere Code-Erweiterungen und Refactoring
     \item Tests
     \item (Veröffentlichung auf Github?)
   \end{itemize}
