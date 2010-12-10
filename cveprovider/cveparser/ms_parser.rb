@@ -18,7 +18,7 @@ module MSParser
     puts "Added #{counter} items to database."
   end
 
-  def self.print_map entries
+  def self.print_map
     entries = parse    
     entries.each_pair do |ms,cves|
       puts "#{ms}"
@@ -42,7 +42,7 @@ module MSParser
         end
       end
     end
-    puts "Parsed #{entries.size} entries"
+    puts "Parsed #{entries.size} entries."
     entries
   end
 end
