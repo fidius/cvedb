@@ -133,4 +133,22 @@ module NVDParser
   
 end
 
-NVDParser.parse_nvd_file(ARGV[0])
+PARAMS = {
+  '-p' => 'Parse XML file passed as 2nd param.',
+  '-f' => 'Fix duplicate products.'
+  }
+
+case ARGV[0]
+  when '-p' 
+    NVDParser.parse_nvd_file(ARGV[1])    
+  when '-f' || '--fix-duplicates'
+    RailsStore::fix_product_duplicates
+  else
+    puts "ERROR: You've passed none or an unknown parameter, available "+
+      "parameters are:"
+    PARAMS.each_key do |param|
+      puts "#{param}\t#{PARAMS[param]}"
+    end
+end
+  
+
