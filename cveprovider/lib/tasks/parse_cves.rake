@@ -49,10 +49,14 @@ namespace :nvd do
     parse MODIFIED_XML
   end
 
-  desc("Initialisieren der CVE-DB, dabei werden alle Jahres-XMLs geparsed und "+
-    "im Anschluss Produkte auf Duplikate geprueft und diese beseitigt.")
+  desc "Initializes the CVE-DB, parses all annual CVE-XMLs and removes duplicates."
   task :initialize do
     init
+  end
+
+  desc "Creates the mapping between CVEs and Microsoft Security Bulletin Notation in the database."
+  task :mscve do
+    sh "#{runner_version} #{Rails.root.to_s}/cveparser/ms_parser.rb"
   end
 end
 
@@ -88,7 +92,7 @@ def init
     parse xml
   end
   puts "[*] All local XMLs parsed."
-  fix_duplicates
+  sh "#{runner_version} #{Rails.root.to_s}/cveparser/parser.rb -f"
   puts "[*] Initializing done."
 end
 
@@ -120,20 +124,12 @@ def remote_xmls
   xmls.empty? ? nil : xmls
 end
 
-def fix_duplicates
-  if Rails.version[0].to_i < 3
-    sh "ruby script/runner #{Rails.root.to_s}/cveparser/parser.rb -f"
-  else
-    sh "rails runner #{Rails.root.to_s}/cveparser/parser.rb -f"
-  end
+def runner_version
+  Rails.version[0].to_i < 3 ? "ruby script/runner" : "rails runner"
 end
 
 def parse file
-  if Rails.version[0].to_i < 3
-    sh "ruby script/runner #{Rails.root.to_s}/cveparser/parser.rb -p #{XML_DIR + file}"
-  else
-    sh "rails runner #{Rails.root.to_s}/cveparser/parser.rb -p #{XML_DIR + file}"
-  end
+  sh "#{runner_version} #{Rails.root.to_s}/cveparser/parser.rb -p #{XML_DIR + file}"
 end
 
 def wget file
