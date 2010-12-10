@@ -9,10 +9,10 @@ module MSParser
       cves.each do |cve|        
         existing_cve = NvdEntry.find_by_cve(cve)
         if existing_cve
+          Mscve.find_or_create_by_nvd_entry_id_and_name(existing_cve.id, ms)
           puts "Found: #{existing_cve.cve}."
           counter += 1
         end
-        Mscve.find_or_create_by_nvd_entry_id_and_name(existing_cve.id, ms) if existing_cve
       end
     end  
     puts "Added #{counter} items to database."
