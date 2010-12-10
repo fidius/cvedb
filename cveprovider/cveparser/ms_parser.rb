@@ -18,13 +18,13 @@ module MSParser
     puts "Added #{counter} items to database."
   end
 
-    def self.print_map entries
+  def self.print_map entries
     entries = parse    
     entries.each_pair do |ms,cves|
       puts "#{ms}"
       cves.each {|cve| puts "----#{cve}"}
     end
-  end  
+  end 
 
   private
 
