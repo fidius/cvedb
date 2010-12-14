@@ -6,8 +6,8 @@ module MSParser
     entries = parse
     counter = 0
     entries.each_pair do |ms,cves|
-      cves.each do |cve|        
-        existing_cve = NvdEntry.find_by_cve(cve)
+      cves.each do |cve|       
+        existing_cve = NvdEntry.find_by_cve(cve.strip)
         if existing_cve
           Mscve.find_or_create_by_nvd_entry_id_and_name(existing_cve.id, ms)
           puts "Found: #{existing_cve.cve}."
