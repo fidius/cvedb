@@ -1,13 +1,17 @@
 require "#{Rails.root.to_s}/cveparser/parser_model"
-require "#{Rails.root.to_s}/cveparser/rails_store"
-
 
 module NVDParser
   
   include NVDParserModel
-  include RailsStore
   
   def self.parse_nvd_file file
+    
+    entries = cve_entries file
+    RailsStore::save_entries_to_models(file.split("/").last, entries)
+  end
+  
+  
+  def self.cve_entries file
     
     doc = Nokogiri::XML(File.open(file))
     doc.css("nvd").each do |nvd| 
@@ -34,16 +38,7 @@ module NVDParser
     end_time = Time.now
     puts "[*] Finished parsing, I've found #{entries.size} entries. "+
         "Parsing time is #{(end_time-start_time).round} seconds."
-    
-    RailsStore::save_entries_to_models(file.split("/").last, entries)
-  end
-
-  def self.print_entries file
-    entries = parse_nvd_file(file)
-    puts "Entry count = #{entries.size}"
-    entries.each do |entry|
-      puts entry.to_s
-    end
+    entries
   end
   
   private  
@@ -132,23 +127,3 @@ module NVDParser
   end
   
 end
-
-PARAMS = {
-  '-p' => 'Parse XML file passed as 2nd param.',
-  '-f' => 'Fix duplicate products.'
-  }
-
-case ARGV[0]
-  when '-p' 
-    NVDParser.parse_nvd_file(ARGV[1])    
-  when '-f' || '--fix-duplicates'
-    RailsStore::fix_product_duplicates
-  else
-    puts "ERROR: You've passed none or an unknown parameter, available "+
-      "parameters are:"
-    PARAMS.each_key do |param|
-      puts "#{param}\t#{PARAMS[param]}"
-    end
-end
-  
-

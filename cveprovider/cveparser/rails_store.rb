@@ -2,6 +2,7 @@ module RailsStore
   
   MAX_THREADS  = 4
   MODIFIED_XML = "nvdcve-2.0-modified.xml"
+  
   # We teporarily store the vuln products in a hash to fix duplicates easily.
   # The hash looks like this: { :"vulnerable_software_string" => [ cves ] }
   $products = {}
@@ -166,6 +167,24 @@ module RailsStore
       end
     end
     puts "[*] I've deleted #{delete_count} duplicates."
+  end
+  
+  # In contrast to save_entries_to_models this method checks already existent
+  # CVE Entries. Therefore the former should be used to initialize the CVE-DB
+  # and update_cves to store newly or updated CVE-Entries.
+  def self.update_cves xml_entries
+    i_new = 0
+    i_updated = 0
+    xml_entries.each do |xml_entry|
+      if nvd_entry = NvdEntry.find_by_cve(xml_entry.cve)
+        
+        i_updated += 1
+      else
+        
+        i_new += 1
+      end
+    end
+    puts "[*] I've updated #{i_updated} entries and created #{i_new} new ones."
   end
   
 end
