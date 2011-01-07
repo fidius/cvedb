@@ -1,0 +1,16 @@
+Manifest
+Rakefile
+VERSION
+bin/fidius-cveinit
+models/availability_impact.rb
+models/confidentiality_impact.rb
+models/cvss.rb
+models/impact.rb
+models/integrity_impact.rb
+models/mscve.rb
+models/nvd_entry.rb
+models/product.rb
+models/vulnerability_reference.rb
+models/vulnerable_configuration.rb
+models/vulnerable_software.rb
+models/xml.rb
