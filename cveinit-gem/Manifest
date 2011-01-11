@@ -1,4 +1,7 @@
+FIDIUS-CVEinit.gemspec
+LICENSE
 Manifest
+README
 Rakefile
 VERSION
 bin/fidius-cveinit

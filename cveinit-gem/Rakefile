@@ -7,13 +7,14 @@ CLOBBER.include 'models'
 VERSION = File.read('VERSION').strip
 RAILS_PATH = File.join('..', 'cveprovider')
 
-Echoe.new('fidius-cve-template', VERSION) do |p|
+Echoe.new('FIDIUS-CVEinit', VERSION) do |p|
   p.summary     = 'Foo'
   p.description = 'Bar'
   p.url         = 'http://fidius.me'
-  p.author      = 'Fidius'
+  p.author      = 'FIDIUS'
   p.email       = 'grp-fidius@tzi.org'
   p.runtime_dependencies = ['rails']
+  p.development_dependencies = ['rake-hooks', 'echoe']
 end
 
 before :build do
@@ -25,14 +26,14 @@ after :package do
 end
 
 def version_increment
-  v= VERSION.split('.')
-  v[2] = v[2].to_i + 1
   File.open('VERSION', 'w') do |f|
-    f.write(v.join('.'))
+    f.write VERSION.split('.').tap {|v| v[2].to_i + 1 }.join('.')
   end
 end
 
 def copy_files
-  FileUtils.cp_r(File.expand_path(File.join(RAILS_PATH, 'app', 'models')),
-               File.expand_path(File.dirname(__FILE__)))
+  FileUtils.cp_r(
+    File.expand_path(File.join(RAILS_PATH, 'app', 'models')),
+    File.expand_path(File.dirname(__FILE__))
+  )
 end

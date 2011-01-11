@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+$KCODE = 'u' if RUBY_VERSION < '1.9'
+
+require 'fileutils'
+require 'digest/sha1'
+require 'yaml'
+
+DEST_MODELS = File.join(Dir.pwd, 'app', 'models')
+DEST_YAML   = File.join(Dir.pwd, 'config', 'cveinit.yml')
+DEST_INIT   = File.join(Dir.pwd, 'config', 'initializers', 'cveinit.rb')
+GEM_DIR     = File.join(File.expand_path(File.dirname(__FILE__)), '..')
+GEM_INIT    = File.join(GEM_DIR, 'config', 'initializers', 'cveinit.rb')
+SRC_MODELS  = Dir.glob(File.join(GEM_DIR, 'models', '*.rb'))
+VERSION     = File.read(File.join(GEM_DIR, 'VERSION')).strip
+
+unless File.exists?(DEST_MODELS) and File.directory?(DEST_MODELS)
+  $stderr.puts "Could not determine target directory `#{DEST_MODELS}'."
+  $stderr.puts "Are you sure, you're in a RAILS_ROOT?"
+  exit 1
+end
+
+if File.exists?(DEST_YAML)
+  puts "It seems, there was already a CVEinit run. Checking for updates."
+  if yml = YAML.load_file(DEST_YAML)
+    if yml['version'] > VERSION
+      $stderr.puts "The previous run was made with a more recent FIDIUS CVEinit gem. Aborting."
+      exit -1
+    end
+    deletes = []
+    yml['models'].each_pair do |model, hash|
+      file = File.join(DEST_MODELS, model)
+      if Digest::SHA1.hexdigest(File.read(file)) != hash
+        $stderr.puts "File `app/models/#{model}' was modified. Aborting."
+        exit -1
+      end
+      deletes << file
+    end
+    FileUtils.rm_f deletes
+  end
+end
+
+yml = { 'version' => VERSION, 'models' => {} }
+SRC_MODELS.each do |src|
+  dst = File.join(DEST_MODELS, File.basename(src))
+  yml['models'][File.basename(src)] = Digest::SHA1.hexdigest(File.read(src))
+  FileUtils.rm_f dst
+  FileUtils.cp src, dst
+end
+File.open(DEST_YAML, 'w') do |f|
+  f.write yml.to_yaml
+end
+FileUtils.rm_f DEST_INIT
+FileUtils.cp GEM_INIT, DEST_INIT
