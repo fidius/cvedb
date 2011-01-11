@@ -176,15 +176,45 @@ module RailsStore
     i_new = 0
     i_updated = 0
     xml_entries.each do |xml_entry|
-      if nvd_entry = NvdEntry.find_by_cve(xml_entry.cve)
+      
+      entry_params = {
+        :cwe           => xml_entry.cwe,
+        :summary       => xml_entry.summary,
+        :published     => xml_entry.published_datetime,
+        :last_modified => xml_entry.last_modified_datetime
+      }
+      
+      if nvd_entry = NvdEntry.find_by_cve(xml_entry.cve) # update entry
+        nvd_entry.update_attributes(entry_params)
         
+        
+        xml_entry.vulnerable_software.each do |xml_product|
+          values = xml_product.to_s.split(":")
+          values[1].sub!("/", "")
+          product = Product.find_or_initialize_by_part_and_vendor_and_product_and_version_and_update_nr_and_edition_and_language({
+            :part => values[1],
+            :vendor => values[2],
+            :product => values[3],
+            :version => values[4],
+            :update_nr => values[5],
+            :edition => values[6],
+            :language => values[7]
+          })
+          if product.new_record?
+            nvd_entry.vulnerable_configurations << product
+            product.save!
+          end
+          
+          # TODO find_or_create references, find_or_create cvss
+          
+        end
+        nvd_entry.save!
         i_updated += 1
-      else
+      else # TODO create new entry
         
         i_new += 1
       end
     end
     puts "[*] I've updated #{i_updated} entries and created #{i_new} new ones."
   end
-  
 end
