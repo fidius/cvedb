@@ -57,17 +57,7 @@ module RailsStore
 
     cvss_params = {}
     if entry.cvss
-      cvss_params = {
-        :score => entry.cvss.score,
-        :source => entry.cvss.source,
-        :generated_on => DateTime.xmlschema(entry.cvss.generated_on_datetime),
-        :access_vector => entry.cvss.access_vector,
-        :access_complexity => entry.cvss.access_complexity,
-        :authentication => entry.cvss.authentication,
-        :confidentiality_impact => ConfidentialityImpact.create({ :impact_id => Impact.find_by_name(entry.cvss.confidentiality_impact).id}),
-        :integrity_impact => IntegrityImpact.create({ :impact_id => Impact.find_by_name(entry.cvss.integrity_impact).id }),
-        :availability_impact => AvailabilityImpact.create({ :impact_id => Impact.find_by_name(entry.cvss.availability_impact).id })
-      }
+      cvss_params = cvss_hash(entry)
     end
     
     params = {
@@ -90,14 +80,7 @@ module RailsStore
       
     end
     
-    entry.references.each do |ref|
-      VulnerabilityReference.create({
-        :name => ref.name,
-        :link => ref.link,
-        :source => ref.source,
-        :nvd_entry_id => db_entry.id
-      })
-    end
+    create_references entry db_entry.id
     
     db_entry.save!
   end
@@ -205,16 +188,61 @@ module RailsStore
             product.save!
           end
           
-          # TODO find_or_create references, find_or_create cvss
+          nvd_entry.references.destroy
+          create_references xml_entry, nvd_entry.id
           
+          if nvd_entry.cvss
+            nvd_entry.update_attributes(cvss_hash xml_entry)
+          else
+            nvd_entry.cvss = Cvss.create(cvss_hash xml_entry)
+          end
         end
         nvd_entry.save!
         i_updated += 1
       else # TODO create new entry
+        new_entry = NvdEntry.ceate(entry_params)
+        
         
         i_new += 1
       end
     end
     puts "[*] I've updated #{i_updated} entries and created #{i_new} new ones."
+  end
+  
+        @source         = params[:source]
+      @score          = params[:score]
+      @access_vector  = params[:access_vector]
+      @authentication = params[:authentication]
+      @access_complexity      = params[:access_complexity]
+      @integrity_impact       = params[:integrity_impact]
+      @availability_impact    = params[:availability_impact]
+      @confidentiality_impact = params[:confidentiality_impact]
+      @generated_on_datetime  = params[:generated_on_datetime]
+  
+  
+  private
+  
+  def create_references xml_entry, nvd_entry_id
+    xml_entry.references.each do |ref|
+      VulnerabilityReference.create({
+        :name => ref.name,
+        :link => ref.link,
+        :source => ref.source,
+        :nvd_entry_id => nvd_entry_id
+      })
+  end
+  
+  def cvss_hash
+    cvss_params = {
+        :score => entry.cvss.score,
+        :source => entry.cvss.source,
+        :generated_on => DateTime.xmlschema(entry.cvss.generated_on_datetime),
+        :access_vector => entry.cvss.access_vector,
+        :access_complexity => entry.cvss.access_complexity,
+        :authentication => entry.cvss.authentication,
+        :confidentiality_impact => ConfidentialityImpact.create({ :impact_id => Impact.find_by_name(entry.cvss.confidentiality_impact).id}),
+        :integrity_impact => IntegrityImpact.create({ :impact_id => Impact.find_by_name(entry.cvss.integrity_impact).id }),
+        :availability_impact => AvailabilityImpact.create({ :impact_id => Impact.find_by_name(entry.cvss.availability_impact).id })
+    }
   end
 end
