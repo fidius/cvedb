@@ -3,15 +3,8 @@ require "#{Rails.root.to_s}/cveparser/parser_model"
 module NVDParser
   
   include NVDParserModel
-  
-  def self.parse_nvd_file file
-    
-    entries = cve_entries file
-    RailsStore::save_entries_to_models(file.split("/").last, entries)
-  end
-  
-  
-  def self.cve_entries file
+      
+  def self.parse_cve_file file
     
     doc = Nokogiri::XML(File.open(file))
     doc.css("nvd").each do |nvd| 
@@ -31,13 +24,13 @@ module NVDParser
     doc.css('nvd > entry').each do |entry|
       entries << single_entry(entry)
       entry_count += 1
-      if entry_count % 100 == 0
-        puts "I've parsed #{entry_count} CVE Entries"
+      if entry_count % 100 == 0 and entry_count > 0
+        puts "Parsed #{entry_count} CVE Entries."
       end
     end
     end_time = Time.now
-    puts "[*] Finished parsing, I've found #{entries.size} entries. "+
-        "Parsing time is #{(end_time-start_time).round} seconds."
+    puts "[*] Finished parsing, parsed #{entries.size} entries in " +
+         "#{(end_time-start_time).round} seconds."
     entries
   end
   

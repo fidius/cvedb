@@ -14,11 +14,13 @@ PARAMS = {
 
 case ARGV[0]
   when '-p' 
-    NVDParser.parse_nvd_file(ARGV[1])    
+    entries = NVDParser.parse_cve_file ARGV[1]
+    RailsStore::save_entries_to_models(ARGV[1].split("/").last, entries)    
   when '-f'
     RailsStore::fix_product_duplicates
   when '-u'
-    RailsStore.update_cves(NVDParser.cve_entries ARGV[1])
+    entries = NVDParser.parse_cve_file ARGV[1]
+    RailsStore.update_cve_entries(entries)
   when '-m'
     MSParser.parse_ms_cve
   else
