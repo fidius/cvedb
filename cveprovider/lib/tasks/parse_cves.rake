@@ -12,11 +12,9 @@ MODIFIED_XML = "nvdcve-2.0-modified.xml"
 namespace :nvd do 
   desc 'Parses local XML-File.'
   task :parse, :file_name do |t,args|
-    parse args[:file_name] '-p'
+    cve_main '-p', args[:file_name]
   end
   
-
-  # TODO: Prüfen ob die Dateien identisch sind (Größe + Hash)
   desc 'Downloads XML-File from NVD. (with names from nvd:list_remote)'
   task :get, :xml_name do |t,args|
     if args[:xml_name]
@@ -38,15 +36,14 @@ namespace :nvd do
       puts "#{xmls.size} XMLs available:\n------"
       puts xmls
     else
-      puts "No suitable XMLs are found."
+      puts "No suitable XMLs found."
     end
   end
 
-  #TODO: prüfen, ob update auch in parser.rb geht
   desc "Downloads the modified.xml from nvd.org and stores it's content in the database."
   task :update do
     wget MODIFIED_XML
-    parse MODIFIED_XML '-u'
+    cve_main '-u', MODIFIED_XML
   end
 
   desc "Initializes the CVE-DB, parses all annual CVE-XMLs and removes duplicates."
@@ -56,10 +53,13 @@ namespace :nvd do
 
   desc "Creates the mapping between CVEs and Microsoft Security Bulletin Notation in the database."
   task :mscve do
-    sh "#{runner_version} #{Rails.root.to_s}/cveparser/ms_parser.rb"
+    cve_main '-m'
   end
 end
 
+# ---------- Helper - Methods ---------- #
+
+# Initializes the CVE-DB with all CVE data available in the NVD.
 def init
   local_x = local_xmls
   if local_x
@@ -92,10 +92,11 @@ def init
     parse xml
   end
   puts "[*] All local XMLs parsed."
-  sh "#{runner_version} #{Rails.root.to_s}/cveparser/parser.rb -f"
+  cve_main '-f'
   puts "[*] Initializing done."
 end
 
+# Returns an array of xmls that were previously downloaded
 def local_xmls
   if Dir.exists?(XML_DIR)
     entries = []
@@ -124,14 +125,15 @@ def remote_xmls
   xmls.empty? ? nil : xmls
 end
 
-def runner_version
-  Rails.version[0].to_i < 3 ? "ruby script/runner" : "rails runner"
+# Calls the main.rb script with appropriate options
+def cve_main option, file = ''
+  runner_version = Rails.version[0].to_i < 3 ? "ruby script/runner" : "rails runner"
+  main_script = "#{runner_version} #{Rails.root.to_s}/cveparser/main.rb" 
+  param = file.empty? ? file : " #{XML_DIR + file}"
+  sh "#{main_script} #{option} #{param}" 
 end
 
-def parse file option
-  sh "#{runner_version} #{Rails.root.to_s}/cveparser/main.rb #{option} #{XML_DIR + file}"
-end
-
+# Simple wget 
 def wget file
   FileUtils.mkdir_p(XML_DIR)
   sh "wget -O#{XML_DIR + file} #{BASE_URL + file}"

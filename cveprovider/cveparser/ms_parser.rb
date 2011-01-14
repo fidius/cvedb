@@ -47,4 +47,4 @@ module MSParser
   end
 end
 
-MSParser.parse_ms_cve
+#MSParser.parse_ms_cve
