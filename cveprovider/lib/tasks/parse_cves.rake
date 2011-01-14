@@ -12,7 +12,7 @@ MODIFIED_XML = "nvdcve-2.0-modified.xml"
 namespace :nvd do 
   desc 'Parses local XML-File.'
   task :parse, :file_name do |t,args|
-    parse args[:file_name]
+    parse args[:file_name] '-p'
   end
   
 
@@ -46,7 +46,7 @@ namespace :nvd do
   desc "Downloads the modified.xml from nvd.org and stores it's content in the database."
   task :update do
     wget MODIFIED_XML
-    parse MODIFIED_XML
+    parse MODIFIED_XML '-u'
   end
 
   desc "Initializes the CVE-DB, parses all annual CVE-XMLs and removes duplicates."
@@ -128,8 +128,8 @@ def runner_version
   Rails.version[0].to_i < 3 ? "ruby script/runner" : "rails runner"
 end
 
-def parse file
-  sh "#{runner_version} #{Rails.root.to_s}/cveparser/parser.rb -p #{XML_DIR + file}"
+def parse file option
+  sh "#{runner_version} #{Rails.root.to_s}/cveparser/main.rb #{option} #{XML_DIR + file}"
 end
 
 def wget file
