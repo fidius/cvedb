@@ -1,10 +1,10 @@
-FIDIUS-CVEinit.gemspec
 LICENSE
 Manifest
 README
 Rakefile
 VERSION
 bin/fidius-cveinit
+initializers/fidius-cveinit.rb
 models/availability_impact.rb
 models/confidentiality_impact.rb
 models/cvss.rb

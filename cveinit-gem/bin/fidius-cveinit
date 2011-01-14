@@ -10,7 +10,7 @@ DEST_MODELS = File.join(Dir.pwd, 'app', 'models')
 DEST_YAML   = File.join(Dir.pwd, 'config', 'cveinit.yml')
 DEST_INIT   = File.join(Dir.pwd, 'config', 'initializers', 'cveinit.rb')
 GEM_DIR     = File.join(File.expand_path(File.dirname(__FILE__)), '..')
-GEM_INIT    = File.join(GEM_DIR, 'config', 'initializers', 'cveinit.rb')
+GEM_INIT    = File.join(GEM_DIR, 'initializers', 'fidius-cveinit.rb')
 SRC_MODELS  = Dir.glob(File.join(GEM_DIR, 'models', '*.rb'))
 VERSION     = File.read(File.join(GEM_DIR, 'VERSION')).strip
 
