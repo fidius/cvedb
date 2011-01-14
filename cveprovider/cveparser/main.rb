@@ -6,7 +6,7 @@ include NVDParser
 include RailsStore
 
 PARAMS = {
-  '-p' => 'Parse XML file passed as 2nd param.',
+  '-p' => 'Parse new XML file passed as 2nd param.',
   '-f' => 'Fix duplicate products.',
   '-u' => 'Updates CVE-Entries, needs modified.xml or recent.xml by nvd.org as 2nd argument.',
   '-m' => 'Creates the mapping between CVEs and Microsoft Security Bulletin Notation entries in the database.'
@@ -15,7 +15,7 @@ PARAMS = {
 case ARGV[0]
   when '-p' 
     entries = NVDParser.parse_cve_file ARGV[1]
-    RailsStore::save_entries_to_models(ARGV[1].split("/").last, entries)    
+    RailsStore::create_new_entries(ARGV[1].split("/").last, entries)    
   when '-f'
     RailsStore::fix_product_duplicates
   when '-u'
