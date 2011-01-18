@@ -89,7 +89,7 @@ def init
   end
   puts "[*] All available files downloaded, parsing the XMLs now."
   l_ann_xmls.each do |xml|
-    parse xml
+    cve_main '-p', xml
   end
   puts "[*] All local XMLs parsed."
   cve_main '-f'
