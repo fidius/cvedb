@@ -25,7 +25,7 @@ module RailsStore
     if thread_count <= MAX_THREADS
       thread_count += 1
       Thread.new do
-      save_entry(entry)
+      save_entry(entry, true)
       thread_count -= 1
       end
     end
@@ -34,7 +34,7 @@ module RailsStore
       puts "Store: #{entry.cve} [#{i}/#{num_entries}]"
       i += 1
       
-      save_entry(entry)
+      save_entry(entry, true)
     end
     # Until now, the products are only remembered in the $products hash, they
     # are saved when all products are collected so we dont have duplicates
@@ -53,7 +53,15 @@ module RailsStore
         "#{total_time/60}:#{total_time%60}"
   end
   
-  def self.save_entry entry
+  # Stores one entry in the database
+  # with_products_hash:
+  #   true -> The products which belong to the entry are remembered in the
+  #           globale "products"-hash instead of being stored in the db.
+  #           This is used for initializing the database where we collect all
+  #           products in one hash and store them afterwards instead of using
+  #           Rails find_or_create_by_,,,
+  #  false -> The products are stored with each product in the database.
+  def self.save_entry entry, with_products_hash
 
     cvss_params = {}
     if entry.cvss
@@ -71,13 +79,15 @@ module RailsStore
     db_entry = NvdEntry.create(params)
     
     entry.vulnerable_software.each do |product|
-      
-      if $products.has_key? product.to_sym
-        $products[product.to_sym] << entry.cve
+      if with_products_hash # just remember it, we'll store it later.
+        if $products.has_key? product.to_sym
+          $products[product.to_sym] << entry.cve
+        else
+          $products[product.to_sym] = [ entry.cve ]
+        end
       else
-        $products[product.to_sym] = [ entry.cve ]
+        save_product product, entry.cve
       end
-      
     end
     
     create_references entry db_entry.id
@@ -85,7 +95,8 @@ module RailsStore
     db_entry.save!
   end
   
-  
+  # save_products does not check for product duplicates and should be used for
+  # the DB-initialization. fix_product_duplicates should be called afterwards.
   def self.save_products
     puts "[*] I'm storing the products now (#{$products.size})"
     i = 0
@@ -113,6 +124,14 @@ module RailsStore
       i += 1
     end
     puts "[*] All products stored."
+  end
+  
+  def self.save_product product, cve
+    values = product.to_s.split(":")
+    values[1].sub!("/", "")
+    p = Product.find_or_create_by_part_and_vendor_and_product_and_version_and_update_nr_and_edition_and_language(
+      values[1], values[2], values[3], values[4], values[5], values[6], values[7])
+    VulnerableSoftware.find_or_create_by_product_id_and_nvd_entry_id(p.id, NvdEntry.find_by_cve(cve).id)
   end
   
   
@@ -199,10 +218,8 @@ module RailsStore
         end
         nvd_entry.save!
         i_updated += 1
-      else # TODO create new entry
-        new_entry = NvdEntry.ceate(entry_params)
-        
-        
+      else
+        save_entry xml_entry, false
         i_new += 1
       end
     end
