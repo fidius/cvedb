@@ -42,7 +42,7 @@ namespace :nvd do
 
   desc "Downloads the modified.xml from nvd.org and stores it's content in the database."
   task :update do
-    #wget MODIFIED_XML
+    wget MODIFIED_XML
     cve_main '-u', MODIFIED_XML
   end
 
