@@ -1,6 +1,5 @@
 module RailsStore
   
-  #MAX_THREADS  = 4
   MODIFIED_XML = "nvdcve-2.0-modified.xml"
   
   # We temporarily store the vuln products in a hash to fix duplicates easily.
@@ -12,7 +11,6 @@ module RailsStore
     #Check, if XML-File was parsed before. 
     xml_db_entry = Xml.find_by_name(xml_file_name)
 
-    #TODO: Else für nur update
     if xml_db_entry and xml_file_name != MODIFIED_XML
       puts "\n#{xml_file_name} is already in the database! Please use 'rake nvd:update' to fetch the most recent updates."
       return
@@ -22,30 +20,17 @@ module RailsStore
     puts "[*] Storing the CVE-Entries in DB"
     
     num_entries = entries.size
-    i = 1
-#    thread_count = 0
-#    if thread_count <= MAX_THREADS
-#      thread_count += 1
-#      Thread.new do
-#        puts "Store: #{entry.cve} [#{i}/#{num_entries}]"
-#        save_entry(entry)
-#        thread_count -= 1
-#      end
-#    end
-
-    entries.each do |entry|
-      puts "Store: #{entry.cve} [#{i}/#{num_entries}]"
-      i += 1
-      
-      save_entry(entry)
+    
+    entries.each_with_index do |entry, index|
+      puts "Store: #{entry.cve} [#{index+1}/#{num_entries}]"
+      save_entry(entry, true)
     end
 
     # Until now, the products are only remembered in the @products hash, they
     # are saved when all products are collected so we dont have duplicates
     save_products
     
-    params = {:name => xml_file_name, :create_time => Time.now.to_datetime}
-    
+    params = {:name => xml_file_name, :create_time => Time.now.to_datetime}    
     
     if xml_db_entry
       xml_db_entry.update_attributes(params[:create_time])
@@ -58,68 +43,17 @@ module RailsStore
         "#{total_time/60}:#{total_time%60}"
   end
   
-  #TODO: Auch die Relationen beim Update auflösen
-  
-  # In contrast to create_new_entries this method checks already existent
-  # CVE Entries. Therefore the former should be used to initialize the CVE-DB
-  # and update_cves to store newly or updated CVE-Entries.
-  def self.update_cve_entries xml_entries
-    i_new = 0
-    i_updated = 0
-    xml_entries.each do |xml_entry|
-      
-      entry_params = {
-        :cwe           => xml_entry.cwe,
-        :summary       => xml_entry.summary,
-        :published     => xml_entry.published_datetime,
-        :last_modified => xml_entry.last_modified_datetime
-      }
-      
-      if nvd_entry = NvdEntry.find_by_cve(xml_entry.cve) # update entry
-        nvd_entry.update_attributes(entry_params)
-        
-        
-        xml_entry.vulnerable_software.each do |xml_product|
-          values = xml_product.to_s.split(":")
-          values[1].sub!("/", "")
-          product = Product.find_or_initialize_by_part_and_vendor_and_product_and_version_and_update_nr_and_edition_and_language({
-            :part => values[1],
-            :vendor => values[2],
-            :product => values[3],
-            :version => values[4],
-            :update_nr => values[5],
-            :edition => values[6],
-            :language => values[7]
-          })
-          if product.new_record?
-            nvd_entry.vulnerable_configurations << product
-            product.save!
-          end
-          
-          nvd_entry.references.destroy
-          create_references xml_entry, nvd_entry.id
-          
-          if nvd_entry.cvss
-            nvd_entry.update_attributes(cvss_hash xml_entry)
-          else
-            nvd_entry.cvss = Cvss.create(cvss_hash xml_entry)
-          end
-        end
-        nvd_entry.save!
-        i_updated += 1
-      else # TODO create new entry
-        new_entry = NvdEntry.ceate(entry_params)
-        
-        
-        i_new += 1
-      end
-    end
-    puts "[*] I've updated #{i_updated} entries and created #{i_new} new ones."
-  end
-  
   private
-  
-  def self.save_entry entry
+
+  # Stores one entry in the database
+  # with_products_hash:
+  #   true -> The products which belong to the entry are remembered in the
+  #           globale "products"-hash instead of being stored in the db.
+  #           This is used for initializing the database where we collect all
+  #           products in one hash and store them afterwards instead of using
+  #           Rails find_or_create_by_,,,
+  #  false -> The products are stored with each product in the database.
+  def self.save_entry entry, with_products_hash
 
     cvss_params = {}
     if entry.cvss
@@ -137,13 +71,15 @@ module RailsStore
     db_entry = NvdEntry.create(params)
     
     entry.vulnerable_software.each do |product|
-      
-      if @products.has_key? product.to_sym
-        @products[product.to_sym] << entry.cve
+      if with_products_hash # just remember it, we'll store it later.
+        if @products.has_key? product.to_sym
+          @products[product.to_sym] << entry.cve
+        else
+          @products[product.to_sym] = [ entry.cve ]
+        end
       else
-        @products[product.to_sym] = [ entry.cve ]
+        save_product product, entry.cve
       end
-      
     end
     
     create_references entry, db_entry.id
@@ -151,7 +87,8 @@ module RailsStore
     db_entry.save!
   end
   
-  
+  # save_products does not check for product duplicates and should be used for
+  # the DB-initialization. fix_product_duplicates should be called afterwards.
   def self.save_products
     puts "[*] I'm storing the products now (#{@products.size})"
     i = 0
@@ -179,6 +116,14 @@ module RailsStore
       i += 1
     end
     puts "[*] All products stored."
+  end
+  
+  def self.save_product product, cve
+    values = product.to_s.split(":")
+    values[1].sub!("/", "")
+    p = Product.find_or_create_by_part_and_vendor_and_product_and_version_and_update_nr_and_edition_and_language(
+      values[1], values[2], values[3], values[4], values[5], values[6], values[7])
+    VulnerableSoftware.find_or_create_by_product_id_and_nvd_entry_id(p.id, NvdEntry.find_by_cve(cve).id)
   end
   
   
@@ -227,6 +172,58 @@ module RailsStore
           :source => ref.source,
           :nvd_entry_id => nvd_entry_id
         })
+
+  # In contrast to save_entries_to_models this method checks already existent
+  # CVE Entries. Therefore the former should be used to initialize the CVE-DB
+  # and update_cves to store newly or updated CVE-Entries.
+  def self.update_cves xml_entries
+    i_new = 0
+    i_updated = 0
+    xml_entries.each do |xml_entry|
+      
+      entry_params = {
+        :cwe           => xml_entry.cwe,
+        :summary       => xml_entry.summary,
+        :published     => xml_entry.published_datetime,
+        :last_modified => xml_entry.last_modified_datetime
+      }
+      
+      if nvd_entry = NvdEntry.find_by_cve(xml_entry.cve) # update entry
+        nvd_entry.update_attributes(entry_params)
+        
+        
+        xml_entry.vulnerable_software.each do |xml_product|
+          values = xml_product.to_s.split(":")
+          values[1].sub!("/", "")
+          product = Product.find_or_initialize_by_part_and_vendor_and_product_and_version_and_update_nr_and_edition_and_language({
+            :part => values[1],
+            :vendor => values[2],
+            :product => values[3],
+            :version => values[4],
+            :update_nr => values[5],
+            :edition => values[6],
+            :language => values[7]
+          })
+          if product.new_record?
+            nvd_entry.vulnerable_configurations << product
+            product.save!
+          end
+          
+          nvd_entry.references.destroy
+          create_references xml_entry, nvd_entry.id
+          
+          if nvd_entry.cvss
+            nvd_entry.update_attributes(cvss_hash xml_entry)
+          else
+            nvd_entry.cvss = Cvss.create(cvss_hash xml_entry)
+          end
+        end
+        nvd_entry.save!
+        i_updated += 1
+      else
+        save_entry xml_entry, false
+        i_new += 1
+      end
     end
   end
   
