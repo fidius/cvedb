@@ -165,13 +165,15 @@ module RailsStore
   
   # saves the references for an cve entry in the database
   def self.create_references xml_entry, nvd_entry_id
-      xml_entry.references.each do |ref|
-        VulnerabilityReference.create({
-          :name => ref.name,
-          :link => ref.link,
-          :source => ref.source,
-          :nvd_entry_id => nvd_entry_id
-        })
+    xml_entry.references.each do |ref|
+      VulnerabilityReference.create({
+        :name => ref.name,
+        :link => ref.link,
+        :source => ref.source,
+        :nvd_entry_id => nvd_entry_id
+      })
+    end
+  end
 
   # In contrast to save_entries_to_models this method checks already existent
   # CVE Entries. Therefore the former should be used to initialize the CVE-DB
@@ -179,7 +181,8 @@ module RailsStore
   def self.update_cves xml_entries
     i_new = 0
     i_updated = 0
-    xml_entries.each do |xml_entry|
+    puts "[*] Updating or creating NVD Entries."
+    xml_entries.each_with_index do |xml_entry, index|
       
       entry_params = {
         :cwe           => xml_entry.cwe,
@@ -209,11 +212,11 @@ module RailsStore
             product.save!
           end
           
-          nvd_entry.references.destroy
+          nvd_entry.vulnerability_references.destroy
           create_references xml_entry, nvd_entry.id
           
           if nvd_entry.cvss
-            nvd_entry.update_attributes(cvss_hash xml_entry)
+            nvd_entry.cvss.update_attributes(cvss_hash xml_entry)
           else
             nvd_entry.cvss = Cvss.create(cvss_hash xml_entry)
           end
@@ -224,7 +227,9 @@ module RailsStore
         save_entry xml_entry, false
         i_new += 1
       end
+      puts "[#{index+1}/#{xml_entries.size}]"
     end
+    puts "[*] #{i_new} Entries created, #{i_updated} updated."
   end
   
   def self.cvss_hash entry
@@ -235,9 +240,9 @@ module RailsStore
         :access_vector => entry.cvss.access_vector,
         :access_complexity => entry.cvss.access_complexity,
         :authentication => entry.cvss.authentication,
-        :confidentiality_impact => ConfidentialityImpact.create({ :impact_id => Impact.find_by_name(entry.cvss.confidentiality_impact).id}),
-        :integrity_impact => IntegrityImpact.create({ :impact_id => Impact.find_by_name(entry.cvss.integrity_impact).id }),
-        :availability_impact => AvailabilityImpact.create({ :impact_id => Impact.find_by_name(entry.cvss.availability_impact).id })
+        :confidentiality_impact_id => Impact.find_by_name(entry.cvss.confidentiality_impact).id,
+        :integrity_impact_id => Impact.find_by_name(entry.cvss.integrity_impact).id,
+        :availability_impact_id => Impact.find_by_name(entry.cvss.availability_impact).id
     }
   end
 end

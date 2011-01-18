@@ -20,7 +20,7 @@ case ARGV[0]
     RailsStore.fix_product_duplicates
   when '-u'
     entries = NVDParser.parse_cve_file ARGV[1]
-    RailsStore.update_cve_entries(entries)
+    RailsStore.update_cves(entries)
   when '-m'
     MSParser.parse_ms_cve
   else

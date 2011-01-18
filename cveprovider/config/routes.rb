@@ -11,12 +11,6 @@ Cveprovider::Application.routes.draw do
 
   resources :cvsses
 
-  resources :availability_impacts
-
-  resources :confidentiality_impacts
-
-  resources :integrity_impacts
-
   resources :impacts
   
   match 'administration/parser/index' => 'administration#parser_index'

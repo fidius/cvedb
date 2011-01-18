@@ -4,7 +4,7 @@ class NvdEntry < ActiveRecord::Base
   
   has_many :vulnerable_softwares
   has_many :vulnerable_configurations
-  has_many :references
+  has_many :vulnerability_references
 
   validates_uniqueness_of :cve
   
