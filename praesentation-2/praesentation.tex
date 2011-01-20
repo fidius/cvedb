@@ -1,0 +1,119 @@
+
+\documentclass[authorinfoot]{fidius-p}
+\usepackage{listings}
+\lstset{language=Ruby}
+% \usepackage{tabularx}
+\author{AB \and JF}
+% \title[short title]{long title}
+% optional: \subtitle[short subtitle]{long subtitle}
+\title{CVE-DB}
+\subtitle{Endpräsentation?}
+\date{21.01.2011}
+
+\setcounter{tocdepth}{1}
+
+\setbeamertemplate{bibliography item}[text]
+
+\setbeamertemplate{bibliography entry title}{}
+\setbeamertemplate{bibliography entry location}{}
+\setbeamertemplate{bibliography entry note}{}
+
+\bibliographystyle{is-plain}
+
+\begin{document}
+
+\frame{\titlepage}
+\frame{\tableofcontents}
+
+\section{CVE-DB}
+\secframe{Ziele}{
+  \begin{itemize}
+    \item Wir können die von der NVD bereitgestellten XML-Dateien parsen und die
+Daten in Ruby-Objekten vorhalten. \checkmark
+    \item Datenbankschema für CVE-Einträge in einem Rails Projekt erstellt.
+\checkmark
+    \item Ablegen der CVE-Einträge in einer Datenbank. \checkmark
+    \item Abfrage der Datenbank über ActiveRecord möglich. \checkmark
+    \item Rake-Tasks zur Bedienung des Parsers erstellt. \checkmark
+    \item Umgang mit doppelten Datenbankeinträgen. \checkmark
+    \item Integration in den C\&C-Server. (\checkmark)
+    \item Zuordnung zwischen CVE- und MS-Notation. \checkmark
+    \item Veröffentlichung auf Github.
+  \end{itemize}
+}
+
+\subsection{Rake Tasks}
+\begin{frame}[fragile]
+  \frametitle{Rake Tasks}
+  \begin{lstlisting}
+rake nvd:get[xml_name]     # XML von nvd.org runterladen
+rake nvd:initialize        # Initialisieren, XMLs einlesen
+rake nvd:list_local        # Lokale XMLs anzeigen
+rake nvd:list_remote       # Remote XMLs anzeigen
+rake nvd:mscve             # Zuordnung CVE <-> MS Notation
+rake nvd:parse[file_name]  # Datei parsen
+rake nvd:update            # modified.xml laden, parsen
+  \end{lstlisting}
+\end{frame}
+
+
+\secframe{Fidius-CVEinit-GEM}{
+  \begin{itemize}
+    \item Enthält..
+    \begin{itemize}
+     \item Parser
+     \item Models
+     \item Migrations
+     \item Rake Tasks
+    \end{itemize}
+    \item 2 Initialisierungs-Möglichkeiten
+    \begin{itemize}
+     \item \textbf{fidius-cveinit}
+     \item Für Fidius-Kontext gedacht, CVE-DB existiert schon
+     \item Erstellt nur Models, Hinweise zur DB-Konfiguration
+    \end{itemize}
+    \begin{itemize}
+     \item \textbf{cveinit}
+     \item Für externe Nutzung gedacht, CVE-DB muss erzeugt werden
+     \item Erstellt Models, Migrations, Rake-Taks,...
+    \end{itemize}
+  \end{itemize}
+}
+
+\secframe{Suche}{
+  \begin{itemize}
+    \item CVE-DB enthält ``Products'', bestehend aus
+    \begin{itemize}
+     \item vendor - product - version - update\_nr - edition - language
+     \item z.B: apache - http\_server - 1.3.11 - NULL - win32 - NULL
+     \item z.B: microsoft - windows\_2003\_server - NULL - sp2 - itanium
+    \end{itemize}
+    \item Über Products lassen sich CVE-Nummern suchen
+    \subitem{\texttt{has\_many :nvd\_entries, :through =>
+vulnerable\_softwares}}
+    \item Integration in C\&C-Server ist noch nicht abgeschlossen.
+  \end{itemize}
+}
+
+\secframe{Retrospektive}{
+  \begin{itemize}
+    \item Etwas schleppender Start nach den Weihnachtsferien
+    \item Gute Zusammenarbeit mit anderen Gruppen, Hilfe beim C\&C Server
+    \item Tests werden etwas vor sich hergeschoben
+  \end{itemize}
+}
+
+\secframe{Ausblick}{
+  \begin{itemize}
+    \item CVE-DB im Fidius-Kontext ist weitgehend abgeschlossen
+    \begin{itemize}
+     \item Für Standalone wäre noch eine eigene Anzeige nötig
+     \item Vor Veröffentlichung brauchen wir noch Tests
+    \end{itemize}
+    \item Abschlie"sen der Integration erfordert keine eigene AG
+  \end{itemize}
+}
+
+
+\end{document}
+
