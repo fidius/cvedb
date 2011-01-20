@@ -60,10 +60,12 @@ rake nvd:update            # modified.xml laden, parsen
 \secframe{Fidius-CVEinit-GEM}{
   \begin{itemize}
     \item Enthält..
-    \subitem{Parser}
-    \subitem{Models}
-    \subitem{Migrations}
-    \subitem{Rake Tasks}
+    \begin{itemize}
+     \item Parser
+     \item Models
+     \item Migrations
+     \item Rake Tasks
+    \end{itemize}
     \item 2 Initialisierungs-Möglichkeiten
     \begin{itemize}
      \item \textbf{fidius-cveinit}
@@ -81,9 +83,11 @@ rake nvd:update            # modified.xml laden, parsen
 \secframe{Suche}{
   \begin{itemize}
     \item CVE-DB enthält ``Products'', bestehend aus
-    \subitem{vendor - product - version - update\_nr - edition - language}
-    \subitem{z.B: apache - http\_server - 1.3.11 - NULL - win32 - NULL}
-    \subitem{z.B: microsoft - windows\_2003\_server - NULL - sp2 - itanium}
+    \begin{itemize}
+     \item vendor - product - version - update\_nr - edition - language
+     \item z.B: apache - http\_server - 1.3.11 - NULL - win32 - NULL
+     \item z.B: microsoft - windows\_2003\_server - NULL - sp2 - itanium
+    \end{itemize}
     \item Über Products lassen sich CVE-Nummern suchen
     \subitem{\texttt{has\_many :nvd\_entries, :through =>
 vulnerable\_softwares}}
