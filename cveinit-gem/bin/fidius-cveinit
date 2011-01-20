@@ -6,13 +6,109 @@ require 'fileutils'
 require 'digest/sha1'
 require 'yaml'
 
-DEST_MODELS = File.join(Dir.pwd, 'app', 'models')
-DEST_YAML   = File.join(Dir.pwd, 'config', 'cveinit.yml')
-DEST_INIT   = File.join(Dir.pwd, 'config', 'initializers', 'cveinit.rb')
-GEM_DIR     = File.join(File.expand_path(File.dirname(__FILE__)), '..')
-GEM_INIT    = File.join(GEM_DIR, 'initializers', 'fidius-cveinit.rb')
-SRC_MODELS  = Dir.glob(File.join(GEM_DIR, 'models', '*.rb'))
-VERSION     = File.read(File.join(GEM_DIR, 'VERSION')).strip
+
+PARAMS = {
+  '-s' => 'Copies all necessary files to run the CVE-DB as an independent component.',
+  '-f' => 'Copies all models from the CVE-DB to the FIDIUS Command & Control server.'
+}
+
+GEM_DIR         = File.join(File.expand_path(File.dirname(__FILE__)), '..')
+GEM_INIT        = File.join(GEM_DIR, 'initializers', 'fidius-cveinit.rb')
+GEM_README      = File.join(GEM_DIR, 'README')
+
+SRC_MODELS      = Dir.glob(File.join(GEM_DIR, 'models', '*.rb'))
+SRC_MIGRATIONS  = Dir.glob(File.join(GEM_DIR, 'migrate', '*.rb'))
+SRC_CVEPARSER   = Dir.glob(File.join(GEM_DIR, 'cveparser', '*.rb'))
+SRC_TASKS       = Dir.glob(File.join(GEM_DIR, 'tasks', '*.rake'))
+
+DEST_INIT       = File.join(Dir.pwd, 'config', 'initializers', 'cveinit.rb')
+DEST_MODELS     = File.join(Dir.pwd, 'app', 'models')
+DEST_CVEPARSER  = File.join(Dir.pwd, 'cveparser')
+DEST_MIGRATIONS = File.join(Dir.pwd, 'db', 'migrate')
+DEST_TASKS      = File.join(Dir.pwd, 'lib', 'tasks')
+DEST_README     = File.join(Dir.pwd, 'doc', 'README_CVEDB')
+DEST_YAML       = File.join(Dir.pwd, 'config', 'cveinit.yml')
+
+CVE_VERSION     = File.read(File.join(GEM_DIR, 'VERSION')).strip
+
+def save_to_yaml source, destination  
+  yml = {}
+  source.each do |src|
+    dst = File.join(destination, File.basename(src))
+    yml[File.basename(src)] = Digest::SHA1.hexdigest(File.read(src))
+    FileUtils.rm_f dst
+    FileUtils.mkdir_p(destination) unless File.exists?(destination)
+    FileUtils.cp src, dst
+  end
+  yml
+end
+
+def delete_files yaml_folder, dest_folder
+  deletes = []
+  yml[yaml_folder].each_pair do |entry, hash|
+      file = File.join(dest_folder, entry)
+      if Digest::SHA1.hexdigest(File.read(file)) != hash
+        $stderr.puts "File `#{file}' was modified. Aborting."
+        exit -1
+      end
+    deletes << file
+  end
+    FileUtils.rm_f deletes
+    puts "Deleted #{deletes.size} files in #{dest_folder.dirname}"
+end
+
+def init_cve mode 
+  if File.exists?(DEST_YAML)
+    puts "It seems, there was already a CVEinit run. Checking for updates."
+    if yml = YAML.load_file(DEST_YAML)
+      if yml['version'] > CVE_VERSION
+        $stderr.puts "The previous run was made with a more recent FIDIUS CVEinit gem. Aborting."
+        exit -1
+      end
+      
+      delete_files('models', DEST_MODELS)
+      delete_files('init', DEST_INIT) #Checken obs geht
+      
+      if mode == :standalone
+        delete_files('cveparser', DEST_CVEPARSER)
+        delete_files('migrate', DEST_MIGRATIONS)
+        delete_files('tasks', DEST_TASKS)
+        FileUtils.rm_f DEST_README      
+      end 
+    end
+  end
+  
+  yml = {'version' => CVE_VERSION}
+  yml['models'] = save_to_yaml(SRC_MODELS, DEST_MODELS)
+  if mode == :standalone 
+    yml['cveparser'] = save_to_yaml(SRC_CVEPARSER, DEST_CVEPARSER)
+    yml['migrate'] = save_to_yaml(SRC_MIGRATIONS, DEST_MIGRATIONS) 
+    yml['tasks'] = save_to_yaml(SRC_TASKS, DEST_TASKS)
+  end
+  
+  File.open(DEST_YAML, 'w') do |f|
+    f.write yml.to_yaml
+  end
+  
+  if mode == :fidius
+    FileUtils.rm_f DEST_INIT
+    FileUtils.cp GEM_INIT, DEST_INIT
+  end
+  
+  FileUtils.rm_f DEST_README
+  FileUtils.cp GEM_README, DEST_README
+  
+  output_hint = "Finished initialization of the FIDIUS CVE-DB."
+  
+  if mode == :standalone
+    output_hint += "\n\nPlease make sure, that you leave an entry for the CVE-DB in your database.yml.\n"+
+    "Furthermore you need to add the gem 'nokogiri' to your Gemfile for the parser "+
+    "to work." 
+  end
+  
+  puts output_hint
+  
+end
 
 unless File.exists?(DEST_MODELS) and File.directory?(DEST_MODELS)
   $stderr.puts "Could not determine target directory `#{DEST_MODELS}'."
@@ -20,35 +116,16 @@ unless File.exists?(DEST_MODELS) and File.directory?(DEST_MODELS)
   exit 1
 end
 
-if File.exists?(DEST_YAML)
-  puts "It seems, there was already a CVEinit run. Checking for updates."
-  if yml = YAML.load_file(DEST_YAML)
-    if yml['version'] > VERSION
-      $stderr.puts "The previous run was made with a more recent FIDIUS CVEinit gem. Aborting."
-      exit -1
+case ARGV[0]
+  when '-s' 
+    init_cve :standalone
+  when '-f'
+    init_cve :fidius
+  else
+    puts "ERROR: You've passed none or an unknown parameter, available "+
+      "parameters are:"
+    PARAMS.each_key do |param|
+      puts "#{param}\t#{PARAMS[param]}"
     end
-    deletes = []
-    yml['models'].each_pair do |model, hash|
-      file = File.join(DEST_MODELS, model)
-      if Digest::SHA1.hexdigest(File.read(file)) != hash
-        $stderr.puts "File `app/models/#{model}' was modified. Aborting."
-        exit -1
-      end
-      deletes << file
-    end
-    FileUtils.rm_f deletes
-  end
 end
 
-yml = { 'version' => VERSION, 'models' => {} }
-SRC_MODELS.each do |src|
-  dst = File.join(DEST_MODELS, File.basename(src))
-  yml['models'][File.basename(src)] = Digest::SHA1.hexdigest(File.read(src))
-  FileUtils.rm_f dst
-  FileUtils.cp src, dst
-end
-File.open(DEST_YAML, 'w') do |f|
-  f.write yml.to_yaml
-end
-FileUtils.rm_f DEST_INIT
-FileUtils.cp GEM_INIT, DEST_INIT
