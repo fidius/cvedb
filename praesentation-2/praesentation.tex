@@ -7,7 +7,7 @@
 % \title[short title]{long title}
 % optional: \subtitle[short subtitle]{long subtitle}
 \title{CVE-DB}
-\subtitle{Endpräsentation?}
+\subtitle{Präsentation}
 \date{21.01.2011}
 
 \setcounter{tocdepth}{1}
@@ -28,8 +28,7 @@
 \section{CVE-DB}
 \secframe{Ziele}{
   \begin{itemize}
-    \item Wir können die von der NVD bereitgestellten XML-Dateien parsen und die
-Daten in Ruby-Objekten vorhalten. \checkmark
+    \item Parsen der von der NVD bereitgestellten XML-Dateien und vorhalten in Ruby-Objekten. \checkmark
     \item Datenbankschema für CVE-Einträge in einem Rails Projekt erstellt.
 \checkmark
     \item Ablegen der CVE-Einträge in einer Datenbank. \checkmark
@@ -57,25 +56,26 @@ rake nvd:update            # modified.xml laden, parsen
 \end{frame}
 
 
-\secframe{Fidius-CVEinit-GEM}{
+\secframe{fidius-cvedb GEM}{
   \begin{itemize}
     \item Enthält..
     \begin{itemize}
      \item Parser
      \item Models
      \item Migrations
-     \item Rake Tasks
+     \item Rake-Tasks
     \end{itemize}
     \item 2 Initialisierungs-Möglichkeiten
     \begin{itemize}
-     \item \textbf{fidius-cveinit}
+     \item \textbf{''fidius''}
      \item Für Fidius-Kontext gedacht, CVE-DB existiert schon
      \item Erstellt nur Models, Hinweise zur DB-Konfiguration
     \end{itemize}
     \begin{itemize}
-     \item \textbf{cveinit}
+     \item \textbf{''standalone''}
      \item Für externe Nutzung gedacht, CVE-DB muss erzeugt werden
-     \item Erstellt Models, Migrations, Rake-Taks,...
+     \item Erstellt Models, Migrations, Parser und Rake-Tasks
+     \item Hinweise zur DB-Konfiguration und zu benötigten GEMs.
     \end{itemize}
   \end{itemize}
 }
