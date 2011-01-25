@@ -1,7 +1,9 @@
 require 'open-uri'
 
 module MSParser
-
+  
+  BASE_URL = "http://cve.mitre.org/data/refs/refmap/source-MS.html"
+  
   def self.parse_ms_cve
     entries = parse
     counter = 0
@@ -29,7 +31,7 @@ module MSParser
   private
 
   def self.parse
-    doc = Nokogiri::HTML(open("http://cve.mitre.org/data/refs/refmap/source-MS.html"))
+    doc = Nokogiri::HTML(open(BASE_URL))
     entries = Hash.new("")
     current_ms_entry = ""
     doc.css('table[border="2"] > tr').each do |entry|
@@ -46,5 +48,3 @@ module MSParser
     entries
   end
 end
-
-#MSParser.parse_ms_cve
