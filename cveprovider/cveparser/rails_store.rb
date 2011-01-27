@@ -1,4 +1,4 @@
-module RailsStore
+module CveDb::RailsStore
   
   MODIFIED_XML = "nvdcve-2.0-modified.xml"
   
@@ -43,7 +43,6 @@ module RailsStore
         "#{total_time/60}:#{total_time%60}"
   end
   
-  private
 
   # Stores one entry in the database
   # with_products_hash:
@@ -212,15 +211,16 @@ module RailsStore
             product.save!
           end
           
-          nvd_entry.vulnerability_references.destroy
-          create_references xml_entry, nvd_entry.id
-          
           if nvd_entry.cvss
             nvd_entry.cvss.update_attributes(cvss_hash xml_entry)
           else
             nvd_entry.cvss = Cvss.create(cvss_hash xml_entry)
           end
         end
+      
+        nvd_entry.vulnerability_references.destroy_all
+        create_references xml_entry, nvd_entry.id
+      
         nvd_entry.save!
         i_updated += 1
       else

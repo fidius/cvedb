@@ -2,6 +2,8 @@ require 'open-uri'
 
 module MSParser
   
+  include CveDb
+  
   BASE_URL = "http://cve.mitre.org/data/refs/refmap/source-MS.html"
   
   def self.parse_ms_cve

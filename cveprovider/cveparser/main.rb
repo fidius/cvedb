@@ -3,7 +3,7 @@ require "#{Rails.root.to_s}/cveparser/rails_store"
 require "#{Rails.root.to_s}/cveparser/ms_parser"
 
 include NVDParser
-include RailsStore
+include CveDb
 
 PARAMS = {
   '-p' => 'Parse new XML file passed as 2nd param.',

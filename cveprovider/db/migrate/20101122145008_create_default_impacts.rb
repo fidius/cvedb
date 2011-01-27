@@ -4,7 +4,7 @@ class CreateDefaultImpacts < ActiveRecord::Migration
   
   def self.up
     IMPACT_DEFAULTS.each do |name|
-      Impact.find_or_create_by_name(name)
+      CveDb::Impact.find_or_create_by_name(name)
     end
   end
 
