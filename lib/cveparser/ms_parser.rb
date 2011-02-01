@@ -1,4 +1,5 @@
 require 'open-uri'
+require 'nokogiri'
 
 module Fidius::MSParser
   
