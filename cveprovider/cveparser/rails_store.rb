@@ -82,8 +82,11 @@ module CveDb::RailsStore
     end
     
     create_references entry, db_entry.id
-    
-    db_entry.save!
+    # HACK
+    begin
+      db_entry.save!
+    rescue
+    end
   end
   
   # save_products does not check for product duplicates and should be used for

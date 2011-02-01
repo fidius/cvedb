@@ -78,8 +78,10 @@ def init
   puts "[*] I've found #{r_ann_xmls.size} annually XML files remotely."
   puts "[*] Checking locally available XMLs."
   l_ann_xmls = []
-  local_x.each do |xml|
-    l_ann_xmls << xml if xml.match ANNUALLY_XML
+  if local_x
+    local_x.each do |xml|
+      l_ann_xmls << xml if xml.match ANNUALLY_XML
+    end
   end
   puts "[*] I've found #{l_ann_xmls.size} annually XML files locally. I'll "+
     "download the missing XMLs now."

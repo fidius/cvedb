@@ -12,11 +12,10 @@ class CveDb::NvdEntry < CveDb::CveConnection
   def references_string
     res = ""
     vulnerability_references.each_with_index do |reference, i|
-      # Match http://www.foo-bar.de/sub/sub-sub -> http://www.foo-bar.de/
-      # Then cut "http://" and ending "/"
-      link_name = reference.link.match(/http:\/\/\S+\//).to_s[7..-2]
+      # http://www.foo-bar.de/sub/sub-sub -> www.foo-bar.de
+      link_name = reference.link.scan(/(?:https?|s?ftp):\/\/([^\/]+)/).to_s
       res += "<a href=\"#{reference.link}\">#{link_name}</a>"
-      res += ' | ' unless i == vulnerability_references.size-1
+      res += " | " unless i == vulnerability_references.size-1
     end
     res
   end
