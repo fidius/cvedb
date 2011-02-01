@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+require 'optparse'
+require 'fidius-cvedb/version'
+require 'fidius-cvedb'
+
+options = {}
+
+optparse = OptionParser.new do|opts|
+  
+  opts.banner = "Usage: fidius-cvedb-runner [options]"
+  
+  opts.on_tail("-f", "--fidius", "Initialize CVE-DB for Usage in FIDIUS C&C-Server") do
+    puts opts
+    exit
+  end
+  
+  opts.on_tail("-s", "--standalone", "Initialize CVE-DB standalone version") do
+    puts opts
+    exit
+  end
+  
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
+
+  opts.on_tail("-v", "--version", "Show version") do
+    puts "FIDIUS CVE-DB, Version #{Fidius::Cvedb::VERSION}"
+    exit
+  end
+end
+
+optparse.parse!
