@@ -1,6 +1,6 @@
-require "#{Rails.root.to_s}/cveparser/parser_model"
+require "cveparser/parser_model"
 
-module NVDParser
+module Fidius::NVDParser
   
   include NVDParserModel
       

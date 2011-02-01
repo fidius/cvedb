@@ -1,6 +1,6 @@
 require 'open-uri'
 
-module MSParser
+module Fidius::MSParser
   
   include CveDb
   

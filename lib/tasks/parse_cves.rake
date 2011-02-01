@@ -130,7 +130,7 @@ end
 # Calls the main.rb script with appropriate options
 def cve_main option, file = ''
   runner_version = Rails.version[0].to_i < 3 ? "ruby script/runner" : "rails runner"
-  main_script = "#{runner_version} #{Rails.root.to_s}/cveparser/main.rb" 
+  main_script = "#{runner_version} cveparser/main.rb" 
   param = file.empty? ? file : " #{XML_DIR + file}"
   sh "#{main_script} #{option} #{param}" 
 end

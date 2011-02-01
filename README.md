@@ -7,6 +7,8 @@
 #Gemfile requirements (nokogiri)
 #cve establich connection
 #rake tasks
+#change module for all files to Fidius
+#implement runner script
 
 
 

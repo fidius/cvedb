@@ -1,6 +1,6 @@
-require "#{Rails.root.to_s}/cveparser/parser"
-require "#{Rails.root.to_s}/cveparser/rails_store"
-require "#{Rails.root.to_s}/cveparser/ms_parser"
+require "cveparser/parser"
+require "cveparser/rails_store"
+require "cveparser/ms_parser"
 
 include NVDParser
 include CveDb
