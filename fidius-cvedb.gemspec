@@ -6,6 +6,7 @@ Gem::Specification.new do |s|
   s.name        = "fidius-cvedb"
   s.version     = Fidius::CveDb::VERSION
   s.platform    = Gem::Platform::RUBY
+  s.add_dependency('nokogiri') 
   s.authors     = ["Andreas Bender, Jens Färber"]
   s.email       = ["bender@tzi.de, jfaerber@tzi.de"]
   s.homepage    = "http://www.fidius.me"

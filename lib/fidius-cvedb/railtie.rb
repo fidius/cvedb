@@ -12,11 +12,8 @@ module Fidius
         load "tasks/nvd_migrate.rake"
       end       
        Dir.glob(File.join GEM_BASE, 'models', 'fidius', 'cve_db', '*.rb') do |rb|
-        puts rb
         require rb
        end
-      
-      $LOAD_PATH << File.join(GEM_BASE, 'db', 'migrate')
     end
   end
 end

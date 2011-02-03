@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'net/http'
+require 'nokogiri'
 
 BASE_URL = "http://static.nvd.nist.gov/feeds/xml/cve/"
 DOWNLOAD_URL = "http://nvd.nist.gov/download.cfm"
