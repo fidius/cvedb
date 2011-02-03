@@ -4,7 +4,7 @@ require "fidius-cvedb/version"
 
 Gem::Specification.new do |s|
   s.name        = "fidius-cvedb"
-  s.version     = Fidius::Cvedb::VERSION
+  s.version     = Fidius::CveDb::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Andreas Bender, Jens Färber"]
   s.email       = ["bender@tzi.de, jfaerber@tzi.de"]

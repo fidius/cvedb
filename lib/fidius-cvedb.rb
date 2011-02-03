@@ -1,5 +1,5 @@
 module Fidius
-  module Cvedb
+  module CveDb
     require 'fidius-cvedb/railtie' if defined?(Rails)
   end
 end

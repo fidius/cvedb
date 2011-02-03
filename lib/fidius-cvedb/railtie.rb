@@ -1,24 +1,22 @@
 require 'fidius-cvedb'
 require 'rails'
-
-
-GEM_BASE = File.join(ENV['GEM_PATH'], 'fidius-cvedb', 'lib')
+require 'fidius-cvedb/version'
 
 module Fidius
-  module Cvedb
+  module CveDb
+    GEM_BASE = File.join(ENV['GEM_HOME'], 'gems', "fidius-cvedb-#{VERSION}", 'lib')
     class Railtie < Rails::Railtie
       rake_tasks do
         load "tasks/parse_cves.rake"
         load "tasks/db_backup.rake"
-      end
-       
-      # configure our plugin on boot. other extension points such
-      # as configuration, rake tasks, etc, are also available
-      initializer "fidius_cvedb.initialize" do |app|
-        app.config.autoload_path += File.join(GEM_BASE, 'models', 'fidius', 'cve_db')
-      end 
+        load "tasks/nvd_migrate.rake"
+      end       
+       Dir.glob(File.join GEM_BASE, 'models', 'fidius', 'cve_db', '*.rb') do |rb|
+        puts rb
+        require rb
+       end
       
-      #$LOAD_PATH << File.join(GEM_BASE, 'models', 'fidius', 'cve_db')
+      $LOAD_PATH << File.join(GEM_BASE, 'db', 'migrate')
     end
   end
 end

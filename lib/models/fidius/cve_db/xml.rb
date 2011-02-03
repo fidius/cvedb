@@ -1,2 +1,2 @@
-class CveDb::Xml < CveDb::CveConnection
+class Fidius::CveDb::Xml < Fidius::CveDb::CveConnection
 end
