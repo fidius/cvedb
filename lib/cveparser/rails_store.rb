@@ -1,4 +1,4 @@
-module Fidius::CveDb::RailsStore
+module FIDIUS::CveDb::RailsStore
   
   MODIFIED_XML = "nvdcve-2.0-modified.xml"
   

@@ -1,7 +1,7 @@
 require "cveparser/parser_model"
 require "nokogiri"
 
-module Fidius::NVDParser
+module FIDIUS::NVDParser
   
   include NVDParserModel
       

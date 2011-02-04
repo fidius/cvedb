@@ -1,4 +1,4 @@
-module Fidius::NVDParserModel
+module FIDIUS::NVDParserModel
 
   class NVDEntry
     

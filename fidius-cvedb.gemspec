@@ -4,7 +4,7 @@ require "fidius-cvedb/version"
 
 Gem::Specification.new do |s|
   s.name        = "fidius-cvedb"
-  s.version     = Fidius::CveDb::VERSION
+  s.version     = FIDIUS::CveDb::VERSION
   s.platform    = Gem::Platform::RUBY
   s.add_dependency('nokogiri') 
   s.authors     = ["Andreas Bender, Jens Färber"]

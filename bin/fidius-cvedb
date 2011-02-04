@@ -1,7 +1,10 @@
 #!/usr/bin/env ruby
 require 'optparse'
 require 'fidius-cvedb/version'
-require 'fidius-cvedb'
+require 'fileutils'
+
+GEM_BASE = File.join(ENV['GEM_HOME'], 'gems',
+                     "fidius-cvedb-#{FIDIUS::CveDb::VERSION}", 'lib')
 
 options = {}
 
@@ -10,12 +13,16 @@ optparse = OptionParser.new do|opts|
   opts.banner = "Usage: fidius-cvedb-runner [options]"
   
   opts.on_tail("-f", "--fidius", "Initialize CVE-DB for Usage in FIDIUS C&C-Server") do
-    puts opts
+    if rails_root?
+      rake_tasks
+    end
     exit
   end
   
   opts.on_tail("-s", "--standalone", "Initialize CVE-DB standalone version") do
-    puts opts
+    if rails_root?
+      rake_tasks
+    end
     exit
   end
   
@@ -25,9 +32,33 @@ optparse = OptionParser.new do|opts|
   end
 
   opts.on_tail("-v", "--version", "Show version") do
-    puts "FIDIUS CVE-DB, Version #{Fidius::Cvedb::VERSION}"
+    puts "FIDIUS CVE-DB, Version #{FIDIUS::Cvedb::VERSION}"
     exit
   end
+end
+
+def rake_tasks
+  if rails_3?
+    puts "It seems like you are using Rails 3. Rake tasks are included via "+
+         "Railties and don't need to be symlinked."
+  else
+    symlink_rake_tasks
+  end
+end
+
+def symlink_rake_tasks
+  Dir.glob(File.join GEM_BASE, 'tasks', '*.rake') do |rake|
+    dest = File.join 'lib', 'tasks', File.basename(rake)
+    FileUtils.ln_s(rake, dest)
+  end
+end
+
+def rails_root?
+  (File.exists?('config/environment.rb') && File.exists?('app/models'))
+end
+
+def rails_3?
+  File.exists? 'Gemfile'
 end
 
 optparse.parse!

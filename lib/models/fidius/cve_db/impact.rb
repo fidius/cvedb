@@ -1,2 +1,2 @@
-class Fidius::CveDb::Impact < Fidius::CveDb::CveConnection
+class FIDIUS::CveDb::Impact < FIDIUS::CveDb::CveConnection
 end

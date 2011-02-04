@@ -1,4 +1,4 @@
-class Fidius::CveDb::NvdEntry < Fidius::CveDb::CveConnection
+class FIDIUS::CveDb::NvdEntry < FIDIUS::CveDb::CveConnection
   
   has_one :cvss
   has_one :mscve

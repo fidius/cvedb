@@ -4,7 +4,7 @@ namespace :nvd do
   desc 'Execute NVD migrations'
   task :migrate do
     db_connect
-    ActiveRecord::Migrator.migrate(File.join Fidius::CveDb::GEM_BASE, 'db', 'migrate')
+    ActiveRecord::Migrator.migrate(File.join FIDIUS::CveDb::GEM_BASE, 'db', 'migrate')
   end
   
   desc "Drop NVD database"

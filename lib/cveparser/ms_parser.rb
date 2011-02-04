@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'nokogiri'
 
-module Fidius::MSParser
+module FIDIUS::MSParser
   
   include CveDb
   

@@ -1,3 +1,3 @@
-class Fidius::CveDb::Mscve < Fidius::CveDb::CveConnection
+class FIDIUS::CveDb::Mscve < FIDIUS::CveDb::CveConnection
   belongs_to :nvd_entry
 end
