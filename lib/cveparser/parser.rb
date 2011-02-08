@@ -1,7 +1,9 @@
-require "cveparser/parser_model"
-require "nokogiri"
+require 'parser_model'
+require 'rubygems'
+require 'nokogiri'
 
-module FIDIUS::NVDParser
+module FIDIUS
+  module NVDParser
   
   include NVDParserModel
       
@@ -13,7 +15,7 @@ module FIDIUS::NVDParser
       if version != "2.0"
         puts "Your XML has the wrong version (#{version}). " + 
              "The CVE-Parser can only handle XML-Feeds in Version 2.0."
-        return
+        raise 'Invalid Version'
       end 
     end
 
@@ -86,15 +88,15 @@ module FIDIUS::NVDParser
     unless metrics.empty?
       cvss_params = {}
       {
-        score:                  'score',
-        source:                 'source',
-        access_vector:          'access-vector',
-        authentication:         'authentication',
-        access_complexity:      'access-complexity',
-        confidentiality_impact: 'confidentiality-impact',
-        integrity_impact:       'integrity-impact',
-        availability_impact:    'availability-impact',
-        generated_on_datetime:  'generated-on-datetime'
+        :score                  => 'score',
+        :source                 => 'source',
+        :access_vector          => 'access-vector',
+        :authentication         => 'authentication',
+        :access_complexity      => 'access-complexity',
+        :confidentiality_impact => 'confidentiality-impact',
+        :integrity_impact       => 'integrity-impact',
+        :availability_impact    => 'availability-impact',
+        :generated_on_datetime  => 'generated-on-datetime'
       
       }.each_pair do |hash_key, xml_name|
         elem = metrics.at_css("cvss|#{xml_name}")
@@ -120,4 +122,5 @@ module FIDIUS::NVDParser
     val.children.to_s if val
   end
   
+  end
 end

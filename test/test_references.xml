@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<nvd xmlns:vuln="http://scap.nist.gov/schema/vulnerability/0.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cpe-lang="http://cpe.mitre.org/language/2.0" xmlns:cvss="http://scap.nist.gov/schema/cvss-v2/0.2" xmlns="http://scap.nist.gov/schema/feed/vulnerability/2.0" nvd_xml_version="2.0" pub_date="2011-02-08T06:05:00" xsi:schemaLocation="http://scap.nist.gov/schema/feed/vulnerability/2.0 http://nvd.nist.gov/schema/nvd-cve-feed_2.0.xsd">
+    <entry id="CVE-2009-5051">                <cpe-lang:fact-ref name="cpe:/a:sun:openoffice.org:2.0.0" />
+                <cpe-lang:fact-ref name="cpe:/a:sun:openoffice.org:2.4.0" />
+            </cpe-lang:logical-test>
+        </vuln:vulnerable-configuration>
+        <vuln:vulnerable-configuration id="http://nvd.nist.gov">
+            <cpe-lang:logical-test negate="false" operator="OR">
+                <cpe-lang:fact-ref name="cpe:/a:sun:openoffice.org:3.0.1" />
+            </cpe-lang:logical-test>
+        </vuln:vulnerable-configuration>
+        <vuln:vulnerable-software-list>
+            <vuln:product>cpe:/a:sun:openoffice.org:3.1.1</vuln:product>
+        </vuln:vulnerable-software-list>
+        <vuln:cve-id>CVE-2010-3452</vuln:cve-id>
+        <vuln:published-datetime>2011-01-28T17:00:05.347-05:00</vuln:published-datetime>
+        <vuln:last-modified-datetime>2011-02-05T01:58:38.823-05:00</vuln:last-modified-datetime>
+        <vuln:cvss>
+            <cvss:base_metrics>
+                <cvss:score>9.3</cvss:score>
+                <cvss:access-vector>NETWORK</cvss:access-vector>
+                <cvss:access-complexity>MEDIUM</cvss:access-complexity>
+                <cvss:authentication>NONE</cvss:authentication>
+                <cvss:confidentiality-impact>COMPLETE</cvss:confidentiality-impact>
+                <cvss:integrity-impact>COMPLETE</cvss:integrity-impact>
+                <cvss:availability-impact>COMPLETE</cvss:availability-impact>
+                <cvss:source>http://nvd.nist.gov</cvss:source>
+                <cvss:generated-on-datetime>2011-01-31T13:58:00.000-05:00</cvss:generated-on-datetime>
+            </cvss:base_metrics>
+        </vuln:cvss>
+        <vuln:cwe id="CWE-399" />
+        <vuln:references xml:lang="en" reference_type="UNKNOWN">
+            <vuln:source>CONFIRM</vuln:source>
+            <vuln:reference xml:lang="en" href="https://bugzilla.redhat.com/show_bug.cgi?id=640241">https://bugzilla.redhat.com/show_bug.cgi?id=640241</vuln:reference>
+        </vuln:references>
+        <vuln:references xml:lang="en" reference_type="UNKNOWN">
+            <vuln:source>XF</vuln:source>
+            <vuln:reference xml:lang="en" href="http://xforce.iss.net/xforce/xfdb/65031">ooo-oowriter-ce(65031)</vuln:reference>
+        </vuln:references>
+        <vuln:summary>Use-after-free vulnerability in oowriter in OpenOffice.org (OOo) 2.x and 3.x before 3.3 allows remote attackers to cause a denial of service (application crash) or possibly execute arbitrary code via crafted tags in an RTF document.</vuln:summary>
+    </entry>
+
+</nvd>
