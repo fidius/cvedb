@@ -26,7 +26,7 @@ Vulnerabilities easily.
 
 This gem is developed in the context of the students project "FIDIUS" at the
 University of Bremen, for more information about FIDIUS visit
-http://fidius.me/en .
+http://fidius.me/en.
 
 ## Installation
 
