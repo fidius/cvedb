@@ -6,7 +6,8 @@ module FIDIUS
   module NVDParser
   
   include NVDParserModel
-      
+  
+  # Parse Version 2.0 XML-File from nvd.org.     
   def self.parse_cve_file file
     
     doc = Nokogiri::XML(File.open(file))
@@ -39,6 +40,7 @@ module FIDIUS
   
   private  
 
+  # Parse single NVD-Entry and store it in an NVDEntry Object
   def self.single_entry entry
     params = {}
     params[:cve] = entry.attributes['id'].value
@@ -54,6 +56,7 @@ module FIDIUS
     NVDParserModel::NVDEntry.new(params)
   end  
   
+  # Return CWE number for given CVE-Entry
   def self.cwe entry
     cwe = entry.at_css('vuln|cwe')
     cwe.attributes['id'].value if cwe
