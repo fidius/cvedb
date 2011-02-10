@@ -9,8 +9,8 @@ namespace :nvd do
   
   desc "Drop NVD database"
   task :drop do
-    db_connect
-    #TODO: Drop database
+    #db_connect
+    raise NotImplementedError
     
   end
 end
