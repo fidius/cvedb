@@ -1,3 +1,10 @@
+# Author::    FIDIUS (mailto:grp-fidius@tzi.de) 
+# License::   Distributes under the same terms as fidius-cvedb Gem
+
+# This module stores CVE-Entries in a database. Therefore it makes use
+# of the models provided with the gem and uses an ActiveRecord Connection
+# to the database. 
+
 module FIDIUS::CveDb::RailsStore
   
   MODIFIED_XML = "nvdcve-2.0-modified.xml"
@@ -6,6 +13,8 @@ module FIDIUS::CveDb::RailsStore
   # The hash looks like this: { :"vulnerable_software_string" => [ cves ] }
   @products = {}
 
+  # Takes an XML filename and entries parsed with FIDIUS::NVDParser before
+  # and stores the entries in the database.
   def self.create_new_entries xml_file_name, entries
  
     #Check, if XML-File was parsed before. 
@@ -120,6 +129,7 @@ module FIDIUS::CveDb::RailsStore
     puts "[*] All products stored."
   end
   
+  # Stores one product in the database
   def self.save_product product, cve
     values = product.to_s.split(":")
     values[1].sub!("/", "")
@@ -128,7 +138,10 @@ module FIDIUS::CveDb::RailsStore
     VulnerableSoftware.find_or_create_by_product_id_and_nvd_entry_id(p.id, NvdEntry.find_by_cve(cve).id)
   end
   
-  
+  # Removes duplicates from the Products-table in the database
+  # Therefore it creates a hash and adds all products to it. 
+  # This prevents duplicate entries and the non-unique products
+  # will be removed.
   def self.fix_product_duplicates
     products = Product.all
     puts "[*] I'm checking #{products.size} products for duplicates."+
@@ -209,10 +222,6 @@ module FIDIUS::CveDb::RailsStore
             :edition => values[6],
             :language => values[7]
           })
-#          if product.new_record?
-#            nvd_entry.vulnerable_softwares << product
-#            product.save!
-#          end
           
           if product.new_record?
             VulnerableSoftware.find_or_create_by_nvd_entry_id_and_product_id(nvd_entry.id, product.id)
@@ -240,6 +249,7 @@ module FIDIUS::CveDb::RailsStore
     puts "[*] #{i_new} Entries created, #{i_updated} updated."
   end
   
+  # Returns a hash filled with CVSS-data from the database
   def self.cvss_hash entry
     cvss_params = {
         :score => entry.cvss.score,

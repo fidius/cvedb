@@ -7,7 +7,7 @@ include FIDIUS::CveDb
 PARAMS = {
   '-p' => 'Parse new XML file passed as 2nd param.',
   '-f' => 'Fix duplicate products.',
-  '-u' => 'Updates CVE-Entries, needs modified.xml or recent.xml by nvd.org as 2nd argument.',
+  '-u' => 'Updates CVE-Entries, needs modified.xml or recent.xml by nvd.nist.gov as 2nd argument.',
   '-m' => 'Creates the mapping between CVEs and Microsoft Security Bulletin Notation entries in the database.'
 }
 
