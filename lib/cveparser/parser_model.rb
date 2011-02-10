@@ -1,6 +1,13 @@
+# Author::    FIDIUS (mailto:grp-fidius@tzi.de) 
+# License::   Distributes under the same terms as fidius-cvedb Gem
+
+# This module provides the object model for one CVE entry as listed in
+# the National Vulnerability Database (nvd.org). 
+
 module FIDIUS
   module NVDParserModel
 
+    # Represents an entry from nvd.org
     class NVDEntry
       
       attr_accessor :cve, :vulnerable_configurations, :cvss, :vulnerable_software,
@@ -19,10 +26,9 @@ module FIDIUS
         @references = params[:references]
       end
       
-      
     end
     
-    
+    # Contains all fields to represent a reference
     class Reference
       
       attr_accessor :source, :link, :name
@@ -39,7 +45,9 @@ module FIDIUS
       
     end
     
-    
+    # Contains all fields of an CVSS-Score
+    # Underscore is needed because there is an rails model
+    # with the same name
     class Cvss_
       
       attr_accessor :score, :access_vector, :access_complexity, :authentication,
@@ -59,5 +67,6 @@ module FIDIUS
       end
       
     end
+    
   end
 end
