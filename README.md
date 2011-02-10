@@ -16,8 +16,8 @@
 # FIDIUS fidius-cvedb
 
 The FIDIUS CVE-DB is used to create your own vulnerability database, based on
-the National Vulnerability Database ( http://nvd.nist.gov/ ), or use an already
-existing withing your Rails-app.
+the National Vulnerability Database [http://nvd.nist.gov](http://nvd.nist.gov/),
+or use an already existing withing your Rails-app.
 
 Therefore it includes rake tasks to download and parse XML files provided by the
 NVD, to store and update them in your personal database. Furthermore it includes
@@ -26,7 +26,7 @@ Vulnerabilities easily.
 
 This gem is developed in the context of the students project "FIDIUS" at the
 University of Bremen, for more information about FIDIUS visit
-http://fidius.me/en.
+[fidius.me](http://fidius.me/en).
 
 ## Installation
 
@@ -41,16 +41,18 @@ The setup depends on the context you want to use the gem. It can be used in the
 context of the FIDIUS Command&Control Server, or in your own Rails-app. It might
 access an already existing database or migrate a new one.
 
-0. Go to your Rails-app folder and run "fidius-cvedb --standalone" or
-   "fidius-cvedb --fidius", depending on the context you are using it. For Rails
+0. Go to your Rails-app folder and run `fidius-cvedb --standalone` or
+   `fidius-cvedb --fidius`, depending on the context you are using it. For Rails
    versions prior 3 this will create symlinks for the Rake tasks.
    
 1. Setup a new CVE Database if you need to or configure an existing one.
-  * When you created a new database, run "rake nvd:migrate" to create the tables
+
+  * When you created a new database, run `rake nvd:migrate` to create the tables
     needed.
-  * Adapt your database.yml accordingly, the name for your database *MUST* be
+  * Adapt your database.yml accordingly, the name for your database _MUST_ be
     "cve_db" an example could look like this:
 
+<blockquote>
     cve_db:
       adapter: mysql2
       encoding: utf8
@@ -59,15 +61,8 @@ access an already existing database or migrate a new one.
       username: my_username
       password: my_password
       host: localhost
+</blockquote>
 
-  * 
-
-
-To use this package as library, follow these steps:
-
-1. do this
-2. and
-3. that
 
 
 ## Synopsis
