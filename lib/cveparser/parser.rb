@@ -1,4 +1,4 @@
-require 'parser_model'
+require "#{FIDIUS::CveDb::GEM_BASE}/cveparser/parser_model"
 require 'rubygems'
 require 'nokogiri'
 
@@ -65,7 +65,8 @@ module FIDIUS
     entry.css('vuln|references').each do |references|
       ref_params = {}
       ref_params[:source] = child_value(references, 'vuln|source')
-      ref_params[:link] = references.at_css('vuln|reference').attributes['href'].value
+      ref = references.at_css('vuln|reference')
+      ref_params[:link] = ref.attributes['href'].value if ref
       ref_params[:name] = child_value(references, 'vuln|reference')
       ref_array << NVDParserModel::Reference.new(ref_params)
     end

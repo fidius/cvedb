@@ -209,8 +209,13 @@ module FIDIUS::CveDb::RailsStore
             :edition => values[6],
             :language => values[7]
           })
+#          if product.new_record?
+#            nvd_entry.vulnerable_softwares << product
+#            product.save!
+#          end
+          
           if product.new_record?
-            nvd_entry.vulnerable_configurations << product
+            VulnerableSoftware.find_or_create_by_nvd_entry_id_and_product_id(nvd_entry.id, product.id)
             product.save!
           end
           
