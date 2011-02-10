@@ -1,4 +1,4 @@
-require 'parser_model'
+require "#{FIDIUS::CveDb::GEM_BASE}/cveparser/parser_model"
 require 'rubygems'
 require 'nokogiri'
 

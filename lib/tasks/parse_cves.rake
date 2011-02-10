@@ -1,10 +1,12 @@
 require 'open-uri'
 require 'net/http'
 require 'nokogiri'
+require 'fidius-cvedb'
 
 BASE_URL = "http://static.nvd.nist.gov/feeds/xml/cve/"
 DOWNLOAD_URL = "http://nvd.nist.gov/download.cfm"
-XML_DIR = "cveparser/xml/"
+#GEM_BASE = File.join(ENV['GEM_HOME'], 'gems', "fidius-cvedb-#{FIDIUS::CveDb::VERSION}", 'lib')
+XML_DIR = File.join(Dir.pwd, "cveparser", "xml")
 ANNUALLY_XML = /nvdcve-2[.]0-\d{4}[.]xml/
 
 # modified xml includes all recent published and modified cve entries
@@ -131,13 +133,14 @@ end
 # Calls the main.rb script with appropriate options
 def cve_main option, file = ''
   runner_version = Rails.version[0].to_i < 3 ? "ruby script/runner" : "rails runner"
-  main_script = "#{runner_version} cveparser/main.rb" 
-  param = file.empty? ? file : " #{XML_DIR + file}"
+  main_script = "#{runner_version} #{File.join(FIDIUS::CveDb::GEM_BASE, "cveparser", "main.rb")}" 
+  param = file.empty? ? file : " #{File.join(XML_DIR, file)}"
+  puts "Working Dir : #{Dir.pwd}"
   sh "#{main_script} #{option} #{param}" 
 end
 
 # Simple wget 
 def wget file
   FileUtils.mkdir_p(XML_DIR)
-  sh "wget -O#{XML_DIR + file} #{BASE_URL + file}"
+  sh "wget -O#{File.join(XML_DIR, file)} #{BASE_URL + file}"
 end
