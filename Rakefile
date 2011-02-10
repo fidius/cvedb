@@ -1,6 +1,6 @@
+require 'rubygems' # ruby 1.8
 require 'bundler'
 require 'rake/clean'
-require 'rubygems'
 
 Bundler::GemHelper.install_tasks
 
