@@ -6,7 +6,7 @@ require 'rubygems'
 require 'nokogiri'
 
 # This module provides a parser for the National Vulnerability Database
-# (nvd.org). The parser can handle XML files provided by nvd.org in 
+# (nvd.nist.gov). The parser can handle XML files provided by the NVD in 
 # Version 2.0 and stores all entries from the parsed file in objects 
 # from the module 'FIDIUS::NVDParserModel'. 
 
@@ -15,7 +15,7 @@ module FIDIUS
   
     include NVDParserModel
     
-    # Parse Version 2.0 XML-File from nvd.org.     
+    # Parse Version 2.0 XML-File from nvd.nist.gov.     
     def self.parse_cve_file file
       
       doc = Nokogiri::XML(File.open(file))

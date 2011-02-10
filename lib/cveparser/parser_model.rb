@@ -2,12 +2,12 @@
 # License::   Distributes under the same terms as fidius-cvedb Gem
 
 # This module provides the object model for one CVE entry as listed in
-# the National Vulnerability Database (nvd.org). 
+# the National Vulnerability Database (nvd.nist.gov). 
 
 module FIDIUS
   module NVDParserModel
 
-    # Represents an entry from nvd.org
+    # Represents an entry from nvd.nist.gov
     class NVDEntry
       
       attr_accessor :cve, :vulnerable_configurations, :cvss, :vulnerable_software,
