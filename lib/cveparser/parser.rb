@@ -16,7 +16,7 @@ module FIDIUS
       if version != "2.0"
         puts "Your XML has the wrong version (#{version}). " + 
              "The CVE-Parser can only handle XML-Feeds in Version 2.0."
-        raise 'Invalid Version'
+        raise 'Invalid XML Version'
       end 
     end
 

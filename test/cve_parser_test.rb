@@ -10,10 +10,16 @@ class TestCveParser < Test::Unit::TestCase
     assert_raise(RuntimeError) { FIDIUS::NVDParser.parse_cve_file 'test_v2.xml' }
   end
   
-  def test_should_find_2_references
+  def test_should_find_1_reference
     entries = FIDIUS::NVDParser.parse_cve_file 'test_references.xml'
-    puts "------------#{entries.first.inspect}----------------"
-    assert_equal 2, entries.first.references.size, "bla"
+    assert_equal 1, entries.first.references.size, "The test_references.xml " +
+        "contains one reference which should be found."
+  end
+  
+  def test_should_find_3_nvd_entries
+    entries = FIDIUS::NVDParser.parse_cve_file 'test_entries.xml'
+    assert_equal 3, entries.size, "The test_entries.xml contains 3 NVD " +
+        "entries which should be returned in an array."
   end
   
 end
