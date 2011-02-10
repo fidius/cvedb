@@ -3,7 +3,7 @@
 The FIDIUS CVE-DB Gem is used to create and run your own vulnerability database,
 or as an addition to the FIDIUS Command&Control Server to receive vulnerability
 information about target hosts. It uses the National Vulnerability Database
-(NVD [nvd.nist.gov](http://nvd.nist.gov/) ) to gather vulnerability entries
+(NVD [nvd.nist.gov](http://nvd.nist.gov/)) to gather vulnerability entries
 which are based on the Common Vulnerabilities and Exposures (CVE) identifiers.
 
 Therefore it includes rake tasks to download and parse XML files provided by the
