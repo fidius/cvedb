@@ -1,11 +1,20 @@
+# Author::    FIDIUS (mailto:grp-fidius@tzi.de) 
+# License::   Distributes under the same terms as fidius-cvedb Gem
+
 require 'open-uri'
 require 'nokogiri'
+
+# This module provides a parser for the mapping between CVE-Number
+# and Microsoft Security Bulletin Number. It also stores the 
+# relationships in the database, so you need the models to store 
+# them.
 
 module FIDIUS
   module MSParser
   
     BASE_URL = "http://cve.mitre.org/data/refs/refmap/source-MS.html"
     
+    # Calls 'parse' and stores the mapping in the database
     def self.parse_ms_cve
       entries = parse
       counter = 0
@@ -22,6 +31,7 @@ module FIDIUS
       puts "Added #{counter} items to database."
     end
 
+    # Print all MS-Notation numbers mapped to CVE-Entries 
     def self.print_map
       entries = parse    
       entries.each_pair do |ms,cves|
@@ -31,7 +41,9 @@ module FIDIUS
     end 
 
     private
-
+    
+    # Parses the page given by BASE_URL and returns
+    # all entries 
     def self.parse
       doc = Nokogiri::HTML(open(BASE_URL))
       entries = Hash.new("")
