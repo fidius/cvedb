@@ -1,22 +1,7 @@
-
-
-
-
-#TODO
-#Database Example config
-#Gemfile requirements (nokogiri)
-#cve establich connection
-#rake tasks
-#change module for all files to FIDIUS
-#implement runner script
-
-
-
-
 # FIDIUS fidius-cvedb
 
 The FIDIUS CVE-DB is used to create your own vulnerability database, based on
-the National Vulnerability Database [http://nvd.nist.gov](http://nvd.nist.gov/),
+the National Vulnerability Database [nvd.nist.gov](http://nvd.nist.gov/),
 or use an already existing withing your Rails-app.
 
 Therefore it includes rake tasks to download and parse XML files provided by the
@@ -34,6 +19,8 @@ Simply install this package with Rubygems:
 
     $ gem install fidius-cvedb
 
+Please note: The CVE-DB Gem has only been tested with Linux systems and might
+not work with Windows.
 
 ## Example of use
 
@@ -44,15 +31,13 @@ access an already existing database or migrate a new one.
 0. Go to your Rails-app folder and run `fidius-cvedb --standalone` or
    `fidius-cvedb --fidius`, depending on the context you are using it. For Rails
    versions prior 3 this will create symlinks for the Rake tasks.
-   
-1. Setup a new CVE Database if you need to or configure an existing one.
-
-  * When you created a new database, run `rake nvd:migrate` to create the tables
-    needed.
-  * Adapt your database.yml accordingly, the name for your database _MUST_ be
+1. Setup a new CVE Database if you need to or configure an existing one; When
+   you created a new database, run `rake nvd:migrate` to create the tables
+   needed.
+2. Adapt your database.yml accordingly, the name for your database _MUST_ be
     "cve_db" an example could look like this:
 
-<blockquote>
+
     cve_db:
       adapter: mysql2
       encoding: utf8
@@ -61,21 +46,32 @@ access an already existing database or migrate a new one.
       username: my_username
       password: my_password
       host: localhost
-</blockquote>
 
+
+3. When you set up your own database initialize it (note that it needs to be
+   migrated before). Go to your Rails-app folder and run
+   `rake nvd:initialize`. This will download all available informations from the
+   NVD, parse and store it in your database. This takes about 3 hours, depending
+   on your machine. To keep your database up-to-date run `rake nvd:update`
+   regularly, e.g. as daily cronjob.
+4. Now you should be able to use the NVD Entries, to test this go to your
+   console (`rails console` | `ruby script/console`) and get an Entry:
+
+    $ FIDIUS::CveDb::NvdEntry.first
 
 
 ## Synopsis
 
 This package comes with an executable script. You may invoke it as
 
-    $ gemname-runner [--opt=x|--no-opt=y] <file>
+    $ fidius-cvedb <option>
 
-where
+where <option> may be:
 
-* `--opt` does absolutely nothing with `x`
-* `--no-opt` does aparently nothing with `y`
-* `<file>` is ignores
+* `-f` | `--fidius` Initialize CVE-DB for Usage in FIDIUS C&C-Server
+* `-s` | `--standalone` Initialize CVE-DB standalone version
+* `-h` | `--help` Show help message
+* `-v` | `--version` Shows the gem version
 
 
 ## Authors and Contact
