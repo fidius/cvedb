@@ -38,14 +38,14 @@ access an already existing database or migrate a new one.
     "cve_db" an example could look like this:
 
 
-    cve_db:
-      adapter: mysql2
-      encoding: utf8
-      database: my_cve_database
-      pool: 5
-      username: my_username
-      password: my_password
-      host: localhost
+          cve_db:
+            adapter: mysql2
+            encoding: utf8
+            database: my_cve_database
+            pool: 5
+            username: my_username
+            password: my_password
+            host: localhost
 
 
 3. When you set up your own database initialize it (note that it needs to be
@@ -57,7 +57,7 @@ access an already existing database or migrate a new one.
 4. Now you should be able to use the NVD Entries, to test this go to your
    console (`rails console` | `ruby script/console`) and get an Entry:
 
-    $ FIDIUS::CveDb::NvdEntry.first
+        $ FIDIUS::CveDb::NvdEntry.first
 
 
 ## Synopsis
@@ -66,7 +66,7 @@ This package comes with an executable script. You may invoke it as
 
     $ fidius-cvedb <option>
 
-where <option> may be:
+where _option_ may be:
 
 * `-f` | `--fidius` Initialize CVE-DB for Usage in FIDIUS C&C-Server
 * `-s` | `--standalone` Initialize CVE-DB standalone version
