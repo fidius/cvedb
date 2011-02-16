@@ -3,8 +3,7 @@ require 'optparse'
 require 'fidius-cvedb/version'
 require 'fileutils'
 
-GEM_BASE = File.join(ENV['GEM_HOME'], 'gems',
-                     "fidius-cvedb-#{FIDIUS::CveDb::VERSION}", 'lib')
+GEM_BASE = File.expand_path('../../lib', __FILE__)
 
 options = {}
 
@@ -27,6 +26,7 @@ optparse = OptionParser.new do|opts|
   end
   
   opts.on_tail("-h", "--help", "Show this message") do
+    puts "GEM_BASE=#{GEM_BASE}"
     puts opts
     exit
   end
