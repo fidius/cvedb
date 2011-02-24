@@ -1,7 +1,8 @@
 # Author::    FIDIUS (mailto:grp-fidius@tzi.de) 
 # License::   Distributes under the same terms as fidius-cvedb Gem
+PARSER_DIR = File.dirname(File.expand_path(__FILE__))
 
-require "#{FIDIUS::CveDb::GEM_BASE}/cveparser/parser_model"
+require "#{PARSER_DIR}/parser_model"
 require 'rubygems'
 require 'nokogiri'
 
