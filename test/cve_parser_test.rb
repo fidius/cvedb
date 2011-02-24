@@ -16,10 +16,10 @@ class TestCveParser < Test::Unit::TestCase
         "contains one reference which should be found."
   end
   
-  def test_should_find_3_nvd_entries
-    entries = FIDIUS::NVDParser.parse_cve_file 'test_entries.xml'
-    assert_equal 3, entries.size, "The test_entries.xml contains 3 NVD " +
-        "entries which should be returned in an array."
-  end
+#   def test_should_find_3_nvd_entries
+#     entries = FIDIUS::NVDParser.parse_cve_file 'test_3_entries.xml'
+#     assert_equal 3, entries.size, "The test_entries.xml contains 3 NVD " +
+#         "entries which should be returned in an array."
+#   end
   
 end
