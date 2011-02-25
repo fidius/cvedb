@@ -1,4 +1,5 @@
 require 'fidius-cvedb/version'
+require 'active_record'
 
 module FIDIUS
   module CveDb

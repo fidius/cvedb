@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<nvd xmlns:vuln="http://scap.nist.gov/schema/vulnerability/0.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cpe-lang="http://cpe.mitre.org/language/2.0" xmlns:cvss="http://scap.nist.gov/schema/cvss-v2/0.2" xmlns="http://scap.nist.gov/schema/feed/vulnerability/2.0" nvd_xml_version="2.0" pub_date="2011-02-10T06:05:00" xsi:schemaLocation="http://scap.nist.gov/schema/feed/vulnerability/2.0 http://nvd.nist.gov/schema/nvd-cve-feed_2.0.xsd">
+    <entry id="CVE-2009-5051">
+        <vuln:vulnerable-configuration id="http://nvd.nist.gov">
+            <cpe-lang:logical-test negate="false" operator="OR">
+                <cpe-lang:fact-ref name="cpe:/a:hastymail:hastymail2::beta1" />
+            </cpe-lang:logical-test>
+        </vuln:vulnerable-configuration>
+        <vuln:vulnerable-software-list>
+            <vuln:product>cpe:/a:hastymail:hastymail2::rc7</vuln:product>
+        </vuln:vulnerable-software-list>
+        <vuln:cve-id>CVE-2009-5051</vuln:cve-id>
+        <vuln:published-datetime>2011-01-18T13:03:06.533-05:00</vuln:published-datetime>
+        <vuln:last-modified-datetime>2011-01-18T00:00:00.000-05:00</vuln:last-modified-datetime>
+        <vuln:cvss>
+            <cvss:base_metrics>
+                <cvss:score>5.0</cvss:score>
+                <cvss:access-vector>NETWORK</cvss:access-vector>
+                <cvss:access-complexity>LOW</cvss:access-complexity>
+                <cvss:authentication>NONE</cvss:authentication>
+                <cvss:confidentiality-impact>PARTIAL</cvss:confidentiality-impact>
+                <cvss:integrity-impact>NONE</cvss:integrity-impact>
+                <cvss:availability-impact>NONE</cvss:availability-impact>
+                <cvss:source>http://nvd.nist.gov</cvss:source>
+                <cvss:generated-on-datetime>2011-01-18T13:11:00.000-05:00</cvss:generated-on-datetime>
+            </cvss:base_metrics>
+        </vuln:cvss>
+        <vuln:cwe id="CWE-16" />
+        <vuln:references xml:lang="en" reference_type="UNKNOWN">
+            <vuln:source>CONFIRM</vuln:source>
+            <vuln:reference xml:lang="en" href="http://www.hastymail.org/security/">http://www.hastymail.org/security/</vuln:reference>
+        </vuln:references>
+        <vuln:summary>Hastymail2 before RC 8 does not set the secure flag for the session cookie in an https session, which makes it easier for remote attackers to capture this cookie by intercepting its transmission within an http session.</vuln:summary>
+    </entry>
+    <entry id="CVE-2010-4166">
+        <vuln:vulnerable-configuration id="http://nvd.nist.gov">
+            <cpe-lang:logical-test negate="false" operator="OR">
+                <cpe-lang:fact-ref name="cpe:/a:joomla:joomla%21:1.5.13" />
+            </cpe-lang:logical-test>
+        </vuln:vulnerable-configuration>
+        <vuln:vulnerable-software-list>
+            <vuln:product>cpe:/a:joomla:joomla%21:1.5.9</vuln:product>
+        </vuln:vulnerable-software-list>
+        <vuln:cve-id>CVE-2010-4166</vuln:cve-id>
+        <vuln:published-datetime>2011-01-18T13:03:06.830-05:00</vuln:published-datetime>
+        <vuln:last-modified-datetime>2011-01-20T00:00:00.000-05:00</vuln:last-modified-datetime>
+        <vuln:cvss>
+            <cvss:base_metrics>
+                <cvss:score>7.5</cvss:score>
+                <cvss:access-vector>NETWORK</cvss:access-vector>
+                <cvss:access-complexity>LOW</cvss:access-complexity>
+                <cvss:authentication>NONE</cvss:authentication>
+                <cvss:confidentiality-impact>PARTIAL</cvss:confidentiality-impact>
+                <cvss:integrity-impact>PARTIAL</cvss:integrity-impact>
+                <cvss:availability-impact>PARTIAL</cvss:availability-impact>
+                <cvss:source>http://nvd.nist.gov</cvss:source>
+                <cvss:generated-on-datetime>2011-01-18T13:26:00.000-05:00</cvss:generated-on-datetime>
+            </cvss:base_metrics>
+        </vuln:cvss>
+        <vuln:cwe id="CWE-89" />
+        <vuln:references xml:lang="en" reference_type="UNKNOWN">
+            <vuln:source>MISC</vuln:source>
+            <vuln:reference xml:lang="en" href="http://yehg.net/lab/pr0js/advisories/joomla/core/1.5.21/sql_injection/sqli_%28filter_order_Dir%29_front.jpg">http://yehg.net/lab/pr0js/advisories/joomla/core/1.5.21/sql_injection/sqli_%28filter_order_Dir%29_front.jpg</vuln:reference>
+        </vuln:references>
+        <vuln:summary>Multiple SQL injection vulnerabilities in Joomla! 1.5.x before 1.5.22 allow remote attackers to execute arbitrary SQL commands via (1) the filter_order parameter in a com_weblinks category action to index.php, (2) the filter_order_Dir parameter in a com_weblinks category action to index.php, or (3) the filter_order_Dir parameter in a com_messages action to administrator/index.php.</vuln:summary>
+    </entry>
+    <entry id="CVE-2010-4263">
+        <vuln:vulnerable-configuration id="http://nvd.nist.gov">
+            <cpe-lang:logical-test negate="false" operator="OR">
+                <cpe-lang:fact-ref name="cpe:/a:joomla:joomla%21:1.5.13" />
+            </cpe-lang:logical-test>
+        </vuln:vulnerable-configuration>
+        <vuln:vulnerable-software-list>
+            <vuln:product>cpe:/a:joomla:joomla%21:1.5.9</vuln:product>
+        </vuln:vulnerable-software-list>
+        <vuln:cve-id>CVE-2010-4166</vuln:cve-id>
+        <vuln:published-datetime>2011-01-18T13:03:06.830-05:00</vuln:published-datetime>
+        <vuln:last-modified-datetime>2011-01-20T00:00:00.000-05:00</vuln:last-modified-datetime>
+        <vuln:cvss>
+            <cvss:base_metrics>
+                <cvss:score>7.5</cvss:score>
+                <cvss:access-vector>NETWORK</cvss:access-vector>
+                <cvss:access-complexity>LOW</cvss:access-complexity>
+                <cvss:authentication>NONE</cvss:authentication>
+                <cvss:confidentiality-impact>PARTIAL</cvss:confidentiality-impact>
+                <cvss:integrity-impact>PARTIAL</cvss:integrity-impact>
+                <cvss:availability-impact>PARTIAL</cvss:availability-impact>
+                <cvss:source>http://nvd.nist.gov</cvss:source>
+                <cvss:generated-on-datetime>2011-01-18T13:26:00.000-05:00</cvss:generated-on-datetime>
+            </cvss:base_metrics>
+        </vuln:cvss>
+        <vuln:cwe id="CWE-89" />
+        <vuln:references xml:lang="en" reference_type="UNKNOWN">
+            <vuln:source>MISC</vuln:source>
+            <vuln:reference xml:lang="en" href="http://yehg.net/lab/pr0js/advisories/joomla/core/1.5.21/sql_injection/sqli_%28filter_order_Dir%29_front.jpg">http://yehg.net/lab/pr0js/advisories/joomla/core/1.5.21/sql_injection/sqli_%28filter_order_Dir%29_front.jpg</vuln:reference>
+        </vuln:references>
+        <vuln:summary>Multiple SQL injection vulnerabilities in Joomla! 1.5.x before 1.5.22 allow remote attackers to execute arbitrary SQL commands via (1) the filter_order parameter in a com_weblinks category action to index.php, (2) the filter_order_Dir parameter in a com_weblinks category action to index.php, or (3) the filter_order_Dir parameter in a com_messages action to administrator/index.php.</vuln:summary>
+    </entry>
+</nvd>
