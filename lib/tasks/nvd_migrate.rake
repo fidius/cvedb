@@ -2,7 +2,7 @@ require 'yaml'
 
 namespace :nvd do 
   desc 'Execute NVD migrations'
-  task :migrate do
+  task :migrate => :environment do
     db_connect
     ActiveRecord::Migrator.migrate(File.join FIDIUS::CveDb::GEM_BASE, 'db', 'migrate')
   end

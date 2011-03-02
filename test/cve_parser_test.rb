@@ -5,6 +5,7 @@ $LOAD_PATH.unshift LIB_DIR
 require 'parser'
 require 'test/unit'
 
+# Tests the parsing funcionality of the NVD parser.
 class TestCveParser < Test::Unit::TestCase
   
   include FIDIUS::NVDParser
