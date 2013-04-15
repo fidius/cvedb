@@ -1,0 +1,21 @@
+PATH
+  remote: .
+  specs:
+    fidius-cvedb (0.0.8)
+      nokogiri
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    mysql2 (0.3.11)
+    nokogiri (1.5.9)
+    rake (0.9.6)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  fidius-cvedb!
+  mysql2
+  nokogiri
+  rake
