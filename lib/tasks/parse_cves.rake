@@ -4,13 +4,15 @@ require 'nokogiri'
 require 'fidius-cvedb'
 
 BASE_URL = "http://static.nvd.nist.gov/feeds/xml/cve/"
-DOWNLOAD_URL = "http://nvd.nist.gov/download.cfm"
+BASE_SSL_URL = "https://nvd.nist.gov/static/feeds/xml/cve/"
+DOWNLOAD_URL = "https://nvd.nist.gov/download.cfm"
 #GEM_BASE = File.join(ENV['GEM_HOME'], 'gems', "fidius-cvedb-#{FIDIUS::CveDb::VERSION}", 'lib')
 XML_DIR = File.join(Dir.pwd, "cveparser", "xml")
 ANNUALLY_XML = /nvdcve-2[.]0-\d{4}[.]xml/
 
 # modified xml includes all recent published and modified cve entries
 MODIFIED_XML = "nvdcve-2.0-modified.xml"
+RECENT_XML = "nvdcve-2.0-recent.xml"
 
 namespace :nvd do 
   desc 'Parses local XML-File.'
@@ -47,6 +49,8 @@ namespace :nvd do
   task :update do
     wget MODIFIED_XML
     cve_main '-u', MODIFIED_XML
+    wget RECENT_XML
+    cve_main '-u', RECENT_XML
   end
 
   desc "Initializes the CVE-DB, parses all annual CVE-XMLs and removes duplicates."
@@ -89,6 +93,7 @@ def init
   puts "[*] I've found #{l_ann_xmls.size} annually XML files locally. I'll "+
     "download the missing XMLs now."
   r_ann_xmls.each do |xml|
+    puts "Downloading #{xml}."
     wget xml unless l_ann_xmls.include? xml
     puts "Downloaded #{xml}."
   end
@@ -118,7 +123,7 @@ end
 
 # Returns an array of available xmls or nil if none are found.
 def remote_xmls
-  doc = Nokogiri::HTML(open(DOWNLOAD_URL))
+  doc = Nokogiri::HTML open(DOWNLOAD_URL)
   links = doc.css("div.rightbar > a")
   xmls = []
   links.each do |link|
@@ -142,5 +147,10 @@ end
 # Simple wget 
 def wget file
   FileUtils.mkdir_p(XML_DIR)
-  sh "wget -O#{File.join(XML_DIR, file)} #{BASE_URL + file}"
+  #sh "curl -O #{File.join(XML_DIR, file)} #{BASE_URL + file}"
+  response = open("#{BASE_SSL_URL + file}")
+  open("#{File.join(XML_DIR, file)}", "wb") do |f|
+    # read the file object
+    f.write(response.read)
+  end
 end
