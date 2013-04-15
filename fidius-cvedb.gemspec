@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.version     = FIDIUS::CveDb::VERSION
   s.platform    = Gem::Platform::RUBY
   s.add_dependency('nokogiri') 
-  s.authors     = ["Andreas Bender", "Jens Färber"]
-  s.email       = ["bender@tzi.de", "jfaerber@tzi.de"]
+  s.authors     = ["Andreas Bender", "Jens Färber", "Michael Carlson"]
+  s.email       = ["bender@tzi.de", "jfaerber@tzi.de", "me@mbcarlson.org"]
   s.homepage    = "http://fidius.me"
   s.summary     = %q{Provides a parser and ActiveRecord models for the Common Vulnerability and Exposures (CVE) entries offered by the National Vulnerability Database (http://nvd.nist.gov/). }
   s.description = %q{This gem provides an opportunity to run a vulnerability database in your own environment. Therefore it comes with a parser for the National Vulnerability Database and ActiveRecord models for storing the entries in a local database and accessing Entries comfortable with Rails. }
