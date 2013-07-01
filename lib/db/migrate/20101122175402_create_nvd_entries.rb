@@ -3,7 +3,7 @@ class CreateNvdEntries < ActiveRecord::Migration
     create_table :nvd_entries do |t|
       t.string :cve
       t.string :cwe
-      t.string :summary
+      t.text :summary
       t.datetime :published
       t.datetime :last_modified
 
